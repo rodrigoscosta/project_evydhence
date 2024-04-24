@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/components/button.dart';
-import 'package:project_evydhence/components/cnpj_mask.dart';
 import 'package:project_evydhence/components/cpf_cnpj_mask.dart';
-import 'package:project_evydhence/components/cpf_mask.dart';
 import 'package:project_evydhence/components/date_mask.dart';
 import 'package:project_evydhence/components/date_parser.dart';
 import 'package:project_evydhence/components/phone_mask.dart';
@@ -33,8 +31,6 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
   final _dataNascFundController = TextEditingController(text: '');
   final emailRegExp = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-  final _cpfMask = CpfMask();
-  final _cnpjMask = CnpjMask();
   final _cpfCnpjMask = CpfCnpjMask();
   final _phoneMask = PhoneMask();
 
@@ -79,7 +75,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    
+
     cliente.clearForm();
 
     Navigator.push(
