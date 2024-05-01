@@ -3,6 +3,27 @@ import 'package:project_evydhence/components/date_parser.dart';
 import 'package:project_evydhence/models/client_model.dart';
 
 class ClientController with Store {
+  @observable
+  List<ClientModel> list = ObservableList.of(<ClientModel>[]);
+
+  @computed
+  int get total => list.length;
+
+  @action
+  void add(ClientModel value) {
+    list.add(value);
+  }
+
+  @action
+  void edit(ClientModel cliente, int index) {
+    list[index] = cliente;
+  }
+
+  @action
+  void remove(int index) {
+    list.removeAt(index);
+  }
+
   @action
   void clearForm() {
     setCpfCnpj('');
@@ -30,16 +51,23 @@ class ClientController with Store {
         : fromDateUsingPatternToDateTime(dataNascFund);
 
     return ClientModel(
-      idClient: idClient,
-      cpfCnpj: cpfCnpj,
-      rg: rg,
-      nomeRazao: nomeRazao,
-      telefone: telefone,
-      email: email,
-      confirmarEmail: confirmarEmail,
-      dataNascFund: parsedDataNascFund,
-    );
+        indexClient: indexClient,
+        idClient: idClient,
+        cpfCnpj: cpfCnpj,
+        rg: rg,
+        nomeRazao: nomeRazao,
+        telefone: telefone,
+        email: email,
+        confirmarEmail: confirmarEmail,
+        dataNascFund: parsedDataNascFund,
+        listaVeiculos: []);
   }
+
+  @observable
+  int indexClient = 0;
+
+  @action
+  void setIndexClient(int value) => indexClient = value;
 
   @observable
   int idClient = 0;

@@ -19,7 +19,9 @@ class ClientTile extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.vehiclePage);
+              },
               icon: const Icon(Icons.directions_car),
               tooltip: 'Adicionar veículo',
             ),

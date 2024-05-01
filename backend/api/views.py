@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import PersonSerializer
-from .models import Person
+from .serializers import PersonSerializer, VehicleSerializer
+from .models import Person, Vehicle
 
 # Create your views here.
 
@@ -62,3 +62,48 @@ def deletePerson(request, pk):
     person.delete()
 
     return Response('Cliente excluído!')
+
+@api_view(['GET'])
+def getVehicles(request):
+    vehicles = Vehicle.objects.all()
+    serializer = VehicleSerializer(vehicles, many=True)
+    return Response(serializer.data)
+
+# @api_view(['GET'])
+# def getVehicle(request, pk):
+#     vehicle = Vehicle.objects.get(idClient=pk)
+#     serializer = VehicleSerializer(vehicle, many=False)
+#     return Response(serializer.data)
+
+@api_view(['POST'])
+def createVehicle(request):
+    data = request.data
+    vehicle = Vehicle.objects.create(
+        idVeiculo = data['idVeiculo'],
+        idCliente = data['idCliente'],
+        placa = data['placa'],
+        marca = data['marca'],
+        modelo = data['modelo'],
+        tipoVeiculo = data['tipoVeiculo'],
+        anoFabricacao = data['anoFabricacao'],
+        anoModelo = data['anoModelo']
+    )
+    serializer = VehicleSerializer(vehicle, many=False)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+def updateVehicle(request, pk):
+    data = request.data
+    vehicle = Vehicle.objects.get(idVeiculo=pk)
+    serializer = VehicleSerializer(vehicle, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+def deleteVehicle(request, pk):
+    vehicle = Vehicle.objects.get(idVeiculo=pk)
+    vehicle.delete()
+
+    return Response('Veículo excluído!')

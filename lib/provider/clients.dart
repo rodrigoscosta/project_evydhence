@@ -25,6 +25,7 @@ class Clients with ChangeNotifier {
       _items.update(
           client.cpfCnpj,
           (_) => ClientModel(
+              indexClient: client.indexClient,
               idClient: client.idClient,
               cpfCnpj: client.cpfCnpj,
               rg: client.rg,
@@ -32,11 +33,13 @@ class Clients with ChangeNotifier {
               telefone: client.telefone,
               email: client.email,
               confirmarEmail: client.confirmarEmail,
-              dataNascFund: client.dataNascFund));
+              dataNascFund: client.dataNascFund,
+              listaVeiculos: client.listaVeiculos));
     } else {
       _items.putIfAbsent(
           client.cpfCnpj,
           () => ClientModel(
+              indexClient: client.indexClient,
               idClient: client.idClient,
               cpfCnpj: client.cpfCnpj,
               rg: client.rg,
@@ -44,7 +47,8 @@ class Clients with ChangeNotifier {
               telefone: client.telefone,
               email: client.email,
               confirmarEmail: client.confirmarEmail,
-              dataNascFund: client.dataNascFund));
+              dataNascFund: client.dataNascFund,
+              listaVeiculos: client.listaVeiculos));
     }
     notifyListeners();
   }

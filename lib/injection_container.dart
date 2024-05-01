@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
+import 'package:project_evydhence/controllers/vehicle_controller.dart';
 
 class InjectionContainer {
   InjectionContainer._();
@@ -12,6 +13,9 @@ class InjectionContainer {
   void _registerControllers() {
     sl.registerLazySingleton<ClientController>(
       () => ClientController(),
+    );
+    sl.registerLazySingleton<VehicleController>(
+      () => VehicleController(),
     );
   }
 
