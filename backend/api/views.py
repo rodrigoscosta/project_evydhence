@@ -7,14 +7,17 @@ from .models import Person, Vehicle
 
 @api_view(['GET'])
 def getRoute(request):
-    route = [
-        {
-            'Endpoint': '/backend/create',
-            'method': 'POST',
-            'body': {'body': ""},
-            'description': 'Cria um novo cadastro e envia por uma requisição POST'
+    route = {
+            'ListClients': '/persons/',
+            'Select Client': '/persons/<int:pk>/',
+            'Create Client': '/persons/create',
+            'Update Client': '/persons/<int:pk>/update/',
+            'Delete Client': '/persons/<int:pk>/delete/',
+            'ListVehicles': '/vehicles/',
+            'Create Vehicle': '/vehicles/create',
+            'Update Vehicle': '/vehicles/<int:pk>/update/',
+            'Delete Vehicle': '/vehicles/<int:pk>/delete/'
         }
-    ]    
     return Response(route)
 
 @api_view(['GET'])
@@ -33,7 +36,6 @@ def getPerson(request, pk):
 def createPerson(request):
     data = request.data
     person = Person.objects.create(
-        idClient = data['idClient'],
         nomeRazao = data['nomeRazao'],
         cpfCnpj = data['cpfCnpj'],
         rg = data['rg'],
@@ -79,7 +81,6 @@ def getVehicles(request):
 def createVehicle(request):
     data = request.data
     vehicle = Vehicle.objects.create(
-        idVeiculo = data['idVeiculo'],
         idCliente = data['idCliente'],
         placa = data['placa'],
         marca = data['marca'],

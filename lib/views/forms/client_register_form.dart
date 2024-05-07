@@ -5,11 +5,13 @@ import 'package:project_evydhence/components/button.dart';
 import 'package:project_evydhence/components/cpf_cnpj_mask.dart';
 import 'package:project_evydhence/components/date_mask.dart';
 import 'package:project_evydhence/components/date_parser.dart';
+import 'package:project_evydhence/components/keep_only_digits.dart';
 import 'package:project_evydhence/components/phone_mask.dart';
 import 'package:project_evydhence/components/text_formatter.dart';
 import 'package:project_evydhence/components/text_input_form_field.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
-import 'package:project_evydhence/views/home_page.dart';
+import 'package:project_evydhence/services/api_service.dart';
+import 'package:project_evydhence/views/client_list_page.dart';
 
 class ClientRegisterForm extends StatefulWidget {
   const ClientRegisterForm({super.key});
@@ -73,17 +75,31 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
     Navigator.pop(context);
   }
 
-  void _submit() {
-    if (!_formKey.currentState!.validate()) return;
-
-    cliente.clearForm();
-
+  void _submit() async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const HomePage(),
+        builder: (context) => const ClientListPage(),
       ),
     );
+
+    await ApiService().postClient(
+        cliente.nomeRazao,
+        cliente.cpfCnpj,
+        cliente.rg,
+        fromDateUsingPatternToFormattedString(cliente.dataNascFund),
+        cliente.email,
+        cliente.confirmarEmail,
+        keepOnlyDigits(cliente.telefone));
+
+    print(cliente.nomeRazao);
+    print(cliente.cpfCnpj);
+    print(cliente.email);
+    print(cliente.dataNascFund);
+
+    if (!_formKey.currentState!.validate()) return;
+
+    cliente.clearForm();
   }
 
   @override
@@ -177,6 +193,45 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                   maxLength: 20,
                                 ),
                                 TextInputFormField(
+                                  labelText: 'Data de Nascimento/Fundação',
+                                  controller: _dataNascFundController,
+                                  required: true,
+                                  keyboardType: TextInputType.datetime,
+                                  inputFormatters: [DateMask()],
+                                  onChanged: (value) {
+                                    if (isUsingDatePattern(value)) {
+                                      _handleDataDeFundacaoChanged(value);
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      icon: const Icon(Icons.event_rounded),
+                                      onPressed: () async {
+                                        final result = await showDatePicker(
+                                          context: context,
+                                          locale: const Locale('pt', 'BR'),
+                                          initialDate:
+                                              cliente.dataFundacaoAsDateTime ??
+                                                  DateTime.now(),
+                                          firstDate: DateTime(1900),
+                                          lastDate: DateTime.now(),
+                                          helpText:
+                                              'Selecione a data de fundação',
+                                          cancelText: 'Cancelar',
+                                          confirmText: 'Confirmar',
+                                        );
+                                        if (result != null) {
+                                          _handleDataDeFundacaoChanged(
+                                            fromDateUsingPatternToFormattedString(
+                                                result.toString()),
+                                            changeControllerText: true,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                TextInputFormField(
                                   labelText: 'Telefone',
                                   required: true,
                                   controller: _telefoneController,
@@ -232,46 +287,6 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                   textCapitalization: TextCapitalization.none,
                                   enableInteractiveSelection: false,
                                 ),
-                                TextInputFormField(
-                                  labelText: 'Data de Nascimento/Fundação',
-                                  controller: _dataNascFundController,
-                                  required: true,
-                                  keyboardType: TextInputType.datetime,
-                                  inputFormatters: [DateMask()],
-                                  onChanged: (value) {
-                                    if (isUsingDatePattern(value)) {
-                                      _handleDataDeFundacaoChanged(
-                                          '$value 00:00:00');
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      icon: const Icon(Icons.event_rounded),
-                                      onPressed: () async {
-                                        final result = await showDatePicker(
-                                          context: context,
-                                          locale: const Locale('pt', 'BR'),
-                                          initialDate:
-                                              cliente.dataFundacaoAsDateTime ??
-                                                  DateTime.now(),
-                                          firstDate: DateTime(1900),
-                                          lastDate: DateTime.now(),
-                                          helpText:
-                                              'Selecione a data de fundação',
-                                          cancelText: 'Cancelar',
-                                          confirmText: 'Confirmar',
-                                        );
-                                        if (result != null) {
-                                          _handleDataDeFundacaoChanged(
-                                            fromDateTimeToDateUsingPattern(
-                                                result),
-                                            changeControllerText: true,
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ),
                               ],
                             )
                           ],
@@ -299,8 +314,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                   ),
                   Button(
                     flavor: ButtonFlavor.elevated,
-                    onPressed:
-                        _submit, //cliente.isFormComplete ? _submit : null,
+                    onPressed: _submit,
                     child: const Text('ADICIONAR/EDITAR'),
                   ),
                 ],

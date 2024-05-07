@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/components/button.dart';
-import 'package:project_evydhence/components/cpf_cnpj_mask.dart';
-import 'package:project_evydhence/components/phone_mask.dart';
 import 'package:project_evydhence/components/text_input_form_field.dart';
-import 'package:project_evydhence/controllers/client_controller.dart';
 import 'package:project_evydhence/controllers/vehicle_controller.dart';
 import 'package:project_evydhence/views/home_page.dart';
 
@@ -20,13 +17,12 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
   bool _isInitializing = true;
   final veiculo = GetIt.I<VehicleController>();
   final _formKey = GlobalKey<FormState>();
-  final _cpfCnpjController = TextEditingController(text: '');
-  final _rgController = TextEditingController(text: '');
-  final _nomeController = TextEditingController(text: '');
-  final _telefoneController = TextEditingController(text: '');
-  final _emailController = TextEditingController(text: '');
-  final _confirmarEmailController = TextEditingController(text: '');
-  final _dataNascFundController = TextEditingController(text: '');
+  final _placaController = TextEditingController(text: '');
+  final _marcaController = TextEditingController(text: '');
+  final _modeloController = TextEditingController(text: '');
+  final _tipoVeiculoController = TextEditingController(text: '');
+  final _anoFabricacaoController = TextEditingController(text: '');
+  final _anoModeloEmailController = TextEditingController(text: '');
 
   @override
   void didChangeDependencies() {
@@ -38,13 +34,12 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
 
   @override
   void dispose() {
-    _cpfCnpjController.dispose();
-    _rgController.dispose();
-    _nomeController.dispose();
-    _telefoneController.dispose();
-    _emailController.dispose();
-    _confirmarEmailController.dispose();
-    _dataNascFundController.dispose();
+    _placaController.dispose();
+    _marcaController.dispose();
+    _modeloController.dispose();
+    _tipoVeiculoController.dispose();
+    _anoFabricacaoController.dispose();
+    _anoModeloEmailController.dispose();
     super.dispose();
   }
 
@@ -138,7 +133,7 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
                                 TextInputFormField(
                                   labelText: 'Placa do veículo',
                                   required: true,
-                                  controller: _nomeController,
+                                  controller: _placaController,
                                   keyboardType: TextInputType.text,                 
                                   onChanged: veiculo.setPlaca,
                                   maxLength: 20,
@@ -146,14 +141,14 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
                                 TextInputFormField(
                                   labelText: 'Marca do veículo',
                                   required: true,
-                                  controller: _cpfCnpjController,
+                                  controller: _marcaController,
                                   keyboardType: TextInputType.text,
                                   onChanged: veiculo.setMarca,
                                 ),
                                 TextInputFormField(
                                   labelText: 'Modelo do veículo',
                                   required: true,
-                                  controller: _rgController,
+                                  controller: _modeloController,
                                   keyboardType: TextInputType.text,
                                   onChanged: veiculo.setModelo,
                                   maxLength: 20,
@@ -161,7 +156,7 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
                                 TextInputFormField(
                                   labelText: 'Tipo do veículo',
                                   required: true,
-                                  controller: _rgController,
+                                  controller: _tipoVeiculoController,
                                   keyboardType: TextInputType.text,
                                   onChanged: veiculo.setTipoVeiculo,
                                   maxLength: 20,
@@ -169,7 +164,7 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
                                 TextInputFormField(
                                   labelText: 'Ano de fabricação',
                                   required: true,
-                                  controller: _rgController,
+                                  controller: _anoFabricacaoController,
                                   keyboardType: TextInputType.visiblePassword,
                                   onChanged: veiculo.setAnoFabricacao,
                                   maxLength: 4,
@@ -177,7 +172,7 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
                                 TextInputFormField(
                                   labelText: 'Ano do modelo',
                                   required: true,
-                                  controller: _rgController,
+                                  controller: _anoModeloEmailController,
                                   keyboardType: TextInputType.visiblePassword,
                                   onChanged: veiculo.setAnoModelo,
                                   maxLength: 4,

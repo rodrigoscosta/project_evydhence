@@ -1,3 +1,11 @@
+import 'dart:convert';
+
+List<VehicleModel> vehicleModelFromJson(String str) => List<VehicleModel>.from(
+    json.decode(str).map((x) => VehicleModel.fromJson(x)));
+
+String vehicleModelToJson(List<VehicleModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 class VehicleModel {
   int idVeiculo;
   String placa;
@@ -25,4 +33,14 @@ class VehicleModel {
       tipoVeiculo: json['tipoVeiculo'],
       anoFabricacao: json['anoFabricacao'],
       anoModelo: json['anoModelo']);
+  
+  Map<String, dynamic> toJson() => {
+        "idVeiculo": idVeiculo,
+        "placa": placa,
+        "marca": marca,
+        "modelo": modelo,
+        "tipoVeiculo": tipoVeiculo,
+        "anoFabricacao": anoFabricacao,
+        "anoModelo": anoModelo
+      };
 }

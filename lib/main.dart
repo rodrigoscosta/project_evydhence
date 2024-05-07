@@ -4,6 +4,7 @@ import 'package:project_evydhence/components/touch_and_mouse_scroll_behaviour.da
 import 'package:project_evydhence/injection_container.dart';
 import 'package:project_evydhence/provider/clients.dart';
 import 'package:project_evydhence/routes/app_routes.dart';
+import 'package:project_evydhence/views/client_list_page.dart';
 import 'package:project_evydhence/views/forms/client_register_form.dart';
 import 'package:project_evydhence/views/forms/vehicle_register_form.dart';
 import 'package:project_evydhence/views/login_page.dart';
@@ -36,8 +37,10 @@ class MyApp extends StatelessWidget {
           ),
           routes: {
             AppRoutes.home: (_) => const LoginPage(),
+            AppRoutes.clientPage: (_) => const ClientListPage(),
             AppRoutes.clientForm: (_) => const ClientRegisterForm(),
-            AppRoutes.vehiclePage: (_) => const VehicleRegisterForm()
+            //AppRoutes.vehiclePage: (_) => const VehicleListPage(),
+            AppRoutes.vehicleForm: (_) => const VehicleRegisterForm()
           },
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,

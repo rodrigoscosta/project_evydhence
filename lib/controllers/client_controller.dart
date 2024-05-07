@@ -1,10 +1,23 @@
 import 'package:mobx/mobx.dart';
 import 'package:project_evydhence/components/date_parser.dart';
 import 'package:project_evydhence/models/client_model.dart';
+import 'package:project_evydhence/services/api_service.dart';
+
 
 class ClientController with Store {
+  ClientControllerBase({
+    ApiService? apiService,
+  }) {
+    _apiService = apiService ?? ApiService();
+  }
+
+  late final ApiService _apiService;
+
   @observable
   List<ClientModel> list = ObservableList.of(<ClientModel>[]);
+
+  @action
+  void setClients(List<ClientModel> value) => list = ObservableList.of(value);
 
   @computed
   int get total => list.length;
@@ -51,7 +64,7 @@ class ClientController with Store {
         : fromDateUsingPatternToDateTime(dataNascFund);
 
     return ClientModel(
-        indexClient: indexClient,
+        //indexClient: indexClient,
         idClient: idClient,
         cpfCnpj: cpfCnpj,
         rg: rg,
@@ -59,8 +72,9 @@ class ClientController with Store {
         telefone: telefone,
         email: email,
         confirmarEmail: confirmarEmail,
-        dataNascFund: parsedDataNascFund,
-        listaVeiculos: []);
+        dataNascFund: dataNascFund //parsedDataNascFund,
+        //listaVeiculos: []
+        );
   }
 
   @observable
@@ -124,4 +138,14 @@ class ClientController with Store {
   DateTime? get dataFundacaoAsDateTime => dataNascFund.isEmpty
       ? null
       : fromDateUsingPatternToDateTime(dataNascFund);
+
+  @action
+  Future<void> loadClients() async {
+    try {
+      final clients = await _apiService.getClients();
+      setClients(clients!);
+    } catch (_) {
+      setClients([]);
+    }
+  }
 }

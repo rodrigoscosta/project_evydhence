@@ -8,7 +8,7 @@ String fromDateUsingPatternToFormattedString(
 ) {
   final splittedInDateAndTime = dateUsingSinqiaPattern.split(' ');
   final date = splittedInDateAndTime.first;
-  final time = splittedInDateAndTime.last;
+  //final time = splittedInDateAndTime.last;
 
   final splittedDate = date.split('/');
   final day = splittedDate.first;
@@ -17,7 +17,7 @@ String fromDateUsingPatternToFormattedString(
 
   final dateString = [year, month, day].join('-');
 
-  return '$dateString $time';
+  return dateString;
 }
 
 /// parse 'dd/mm/yyyy hh:ss:mm' to [DateTime].
@@ -34,6 +34,15 @@ String fromDateTimeToDateUsingPattern(DateTime dateTime) {
   final year = dateTime.year.toString();
 
   return '$day/$month/$year';
+}
+
+/// parse [DateTime] to 'dd/mm/yyyy hh:ss:mm'
+String convertePadraoData(DateTime dateTime) {
+  final day = _leadingZeroInt(dateTime.day);
+  final month = _leadingZeroInt(dateTime.month);
+  final year = dateTime.year.toString();
+
+  return '$year-$month-$day';
 }
 
 String _leadingZeroInt(int number) => number.toString().padLeft(2, '0');
