@@ -19,8 +19,8 @@ class ApiService {
     }
   }
 
-  Future<ClientModel?> getClient(int idClient) async {
-    var url = Uri.parse('${ApiConstants.baseUrl}/persons/$idClient/');
+  Future<ClientModel?> getClient(String cpfCnpj) async {
+    var url = Uri.parse('${ApiConstants.baseUrl}/persons/$cpfCnpj/');
     var response = await http.get(url);
 
     if (response.statusCode == HttpStatus.ok) {

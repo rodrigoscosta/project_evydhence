@@ -70,7 +70,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
       _nomeController.text = client.nomeRazao;
       cliente.setNomeRazao(client.nomeRazao);
 
-      _cpfCnpjController.text = client.cpfCnpj;
+      _cpfCnpjController.text = _cpfCnpjMask.format(client.cpfCnpj);
       cliente.setCpfCnpj(client.cpfCnpj);
 
       _rgController.text = client.rg;
@@ -131,10 +131,9 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
   Future<void> createClient() async {
     await ApiService().postClient(
         cliente.nomeRazao,
-        cliente.cpfCnpj,
+        keepOnlyDigits(cliente.cpfCnpj),
         cliente.rg,
-        cliente
-            .dataNascFund, //fromDateUsingPatternToFormattedString(cliente.dataNascFund),
+        cliente.dataNascFund,
         cliente.email,
         cliente.confirmarEmail,
         keepOnlyDigits(cliente.telefone));

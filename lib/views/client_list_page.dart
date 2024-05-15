@@ -54,7 +54,7 @@ class _ClientListPageState extends State<ClientListPage> {
             controller: controller,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
-              labelText: 'Digite o CPF',
+              labelText: 'Digite o CPF (apenas números)',
             ),
           ),
           actions: <Widget>[
@@ -66,8 +66,10 @@ class _ClientListPageState extends State<ClientListPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                int id = int.tryParse(controller.text) ?? -1;
-                ClientModel? result = await ApiService().getClient(id);
+                // int id = int.tryParse(controller.text) ?? -1;
+                // ClientModel? result = await ApiService().getClient(id);
+                String cpfCnpj = controller.text;
+                ClientModel? result = await ApiService().getClient(cpfCnpj);
                 if (result != null) {
                   Navigator.of(context).pop();
                   showResult(context, result);
