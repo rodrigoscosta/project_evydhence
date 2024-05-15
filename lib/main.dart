@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
             AppRoutes.home: (_) => const LoginPage(),
             AppRoutes.clientPage: (_) => const ClientListPage(),
             AppRoutes.clientForm: (_) => const ClientRegisterForm(),
-            //AppRoutes.vehiclePage: (_) => const VehicleListPage(),
+            AppRoutes.vehiclePage: (_) => const VehicleListPage(),
             AppRoutes.vehicleForm: (_) => const VehicleRegisterForm()
           },
           localizationsDelegates: const [

@@ -3,7 +3,6 @@ import 'package:project_evydhence/components/date_parser.dart';
 import 'package:project_evydhence/models/client_model.dart';
 import 'package:project_evydhence/services/api_service.dart';
 
-
 class ClientController with Store {
   ClientControllerBase({
     ApiService? apiService,
@@ -14,28 +13,34 @@ class ClientController with Store {
   late final ApiService _apiService;
 
   @observable
-  List<ClientModel> list = ObservableList.of(<ClientModel>[]);
+  List<ClientModel>? list = ObservableList.of(<ClientModel>[]);
 
   @action
-  void setClients(List<ClientModel> value) => list = ObservableList.of(value);
+  void setClients(List<ClientModel>? value) => list = ObservableList.of(value!);
+
+  @observable
+  ClientModel? client;
+
+  @action
+  void setClient(ClientModel value) => client = value;
 
   @computed
-  int get total => list.length;
+  int get total => list!.length;
 
-  @action
-  void add(ClientModel value) {
-    list.add(value);
-  }
+  // @action
+  // void add(ClientModel value) {
+  //   list.add(value);
+  // }
 
-  @action
-  void edit(ClientModel cliente, int index) {
-    list[index] = cliente;
-  }
+  // @action
+  // void edit(ClientModel cliente, int index) {
+  //   list[index] = cliente;
+  // }
 
-  @action
-  void remove(int index) {
-    list.removeAt(index);
-  }
+  // @action
+  // void remove(int index) {
+  //   list.removeAt(index);
+  // }
 
   @action
   void clearForm() {
@@ -59,12 +64,7 @@ class ClientController with Store {
       dataNascFund.isNotEmpty;
 
   ClientModel createClientFromForm() {
-    final parsedDataNascFund = isUsingDatePattern(dataNascFund)
-        ? fromDateUsingPatternToDateTime('$dataNascFund 00:00:00')
-        : fromDateUsingPatternToDateTime(dataNascFund);
-
     return ClientModel(
-        //indexClient: indexClient,
         idClient: idClient,
         cpfCnpj: cpfCnpj,
         rg: rg,
@@ -72,9 +72,7 @@ class ClientController with Store {
         telefone: telefone,
         email: email,
         confirmarEmail: confirmarEmail,
-        dataNascFund: dataNascFund //parsedDataNascFund,
-        //listaVeiculos: []
-        );
+        dataNascFund: dataNascFund);
   }
 
   @observable

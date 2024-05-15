@@ -3,11 +3,18 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/components/button.dart';
 import 'package:project_evydhence/components/text_input_form_field.dart';
+import 'package:project_evydhence/controllers/client_controller.dart';
 import 'package:project_evydhence/controllers/vehicle_controller.dart';
-import 'package:project_evydhence/views/home_page.dart';
+import 'package:project_evydhence/models/vehicle_model.dart';
+import 'package:project_evydhence/services/api_service.dart';
+import 'package:project_evydhence/views/vehicle_list_page.dart';
 
 class VehicleRegisterForm extends StatefulWidget {
-  const VehicleRegisterForm({super.key});
+  final VehicleModel? vehicle;
+  final int? vehicleId;
+
+  const VehicleRegisterForm({Key? key, this.vehicle, this.vehicleId})
+      : super(key: key);
 
   @override
   State<VehicleRegisterForm> createState() => _VehicleRegisterFormState();
@@ -16,6 +23,7 @@ class VehicleRegisterForm extends StatefulWidget {
 class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
   bool _isInitializing = true;
   final veiculo = GetIt.I<VehicleController>();
+  final cliente = GetIt.I<ClientController>();
   final _formKey = GlobalKey<FormState>();
   final _placaController = TextEditingController(text: '');
   final _marcaController = TextEditingController(text: '');
@@ -45,25 +53,77 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
 
   void _initialization() {
     _isInitializing = false;
-  }
 
+    if (widget.vehicle != null) {
+      final vehicle = widget.vehicle!;
+
+      _placaController.text = vehicle.placa;
+      veiculo.setPlaca(vehicle.placa);
+
+      _marcaController.text = vehicle.marca;
+      veiculo.setMarca(vehicle.marca);
+
+      _modeloController.text = vehicle.modelo;
+      veiculo.setModelo(vehicle.modelo);
+
+      _tipoVeiculoController.text = vehicle.tipoVeiculo;
+      veiculo.setTipoVeiculo(vehicle.tipoVeiculo);
+
+      _anoFabricacaoController.text = vehicle.anoFabricacao;
+      veiculo.setAnoFabricacao(vehicle.anoFabricacao);
+
+      _anoModeloEmailController.text = vehicle.anoModelo;
+      veiculo.setAnoModelo(vehicle.anoModelo);
+    }
+  }
 
   void _cancel() {
     veiculo.clearForm();
     Navigator.pop(context);
   }
 
-  void _submit() {
-    if (!_formKey.currentState!.validate()) return;
-
-    veiculo.clearForm();
-
+  void _submit() async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const HomePage(),
+        builder: (context) => const VehicleListPage(),
       ),
     );
+
+    if (widget.vehicleId != null) {
+      // Se o ID do cliente estiver definido, chama o método de atualização
+      await updateVehicle();
+    } else {
+      // Caso contrário, chama o método de criação de cliente
+      await createVehicle();
+    }
+
+    if (!_formKey.currentState!.validate()) return;
+
+    veiculo.clearForm();
+  }
+
+  Future<void> createVehicle() async {
+    await ApiService().postVehicle(
+        cliente.idClient,
+        veiculo.placa,
+        veiculo.marca,
+        veiculo.modelo,
+        veiculo.tipoVeiculo,
+        veiculo.anoFabricacao,
+        veiculo.anoModelo);
+  }
+
+  Future<void> updateVehicle() async {
+    await ApiService().putVehicle(
+        widget.vehicleId!,
+        cliente.idClient,
+        veiculo.placa,
+        veiculo.marca,
+        veiculo.modelo,
+        veiculo.tipoVeiculo,
+        veiculo.anoFabricacao,
+        veiculo.anoModelo);
   }
 
   @override
@@ -134,7 +194,7 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
                                   labelText: 'Placa do veículo',
                                   required: true,
                                   controller: _placaController,
-                                  keyboardType: TextInputType.text,                 
+                                  keyboardType: TextInputType.text,
                                   onChanged: veiculo.setPlaca,
                                   maxLength: 20,
                                 ),

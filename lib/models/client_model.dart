@@ -6,6 +6,10 @@ List<ClientModel> userModelFromJson(String str) => List<ClientModel>.from(
 String userModelToJson(List<ClientModel> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
+ClientModel clientModelFromJson(String str) => ClientModel.fromJson(
+    json.decode(str).map((x) => ClientModel.fromJson(x)));
+
+
 class ClientModel {
   ClientModel({
     required this.idClient,
@@ -27,10 +31,6 @@ class ClientModel {
   String confirmarEmail;
   String telefone;
 
-  // void addVeiculo(VehicleModel veiculo) {
-  //   listaVeiculos.add(veiculo);
-  // }
-
   factory ClientModel.fromJson(Map<String, dynamic> json) => ClientModel(
       idClient: json["idClient"],
       nomeRazao: json["nomeRazao"],
@@ -40,7 +40,6 @@ class ClientModel {
       email: json["email"],
       confirmarEmail: json["confirmarEmail"],
       telefone: json["telefone"]
-      //listaVeiculos: json['listaVeiculos']
       );
 
   Map<String, dynamic> toJson() => {

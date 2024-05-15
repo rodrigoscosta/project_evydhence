@@ -10,11 +10,16 @@ import 'package:project_evydhence/components/phone_mask.dart';
 import 'package:project_evydhence/components/text_formatter.dart';
 import 'package:project_evydhence/components/text_input_form_field.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
+import 'package:project_evydhence/models/client_model.dart';
 import 'package:project_evydhence/services/api_service.dart';
 import 'package:project_evydhence/views/client_list_page.dart';
 
 class ClientRegisterForm extends StatefulWidget {
-  const ClientRegisterForm({super.key});
+  final ClientModel? client;
+  final int? clientId;
+
+  const ClientRegisterForm({Key? key, this.client, this.clientId})
+      : super(key: key);
 
   @override
   State<ClientRegisterForm> createState() => _ClientRegisterFormState();
@@ -58,6 +63,33 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
 
   void _initialization() {
     _isInitializing = false;
+
+    if (widget.client != null) {
+      final client = widget.client!;
+
+      _nomeController.text = client.nomeRazao;
+      cliente.setNomeRazao(client.nomeRazao);
+
+      _cpfCnpjController.text = client.cpfCnpj;
+      cliente.setCpfCnpj(client.cpfCnpj);
+
+      _rgController.text = client.rg;
+      cliente.setRg(client.rg);
+
+      _telefoneController.text = _phoneMask.format(client.telefone);
+      cliente.setTelefone(client.telefone);
+
+      _emailController.text = client.email;
+      cliente.setEmail(client.email);
+
+      _confirmarEmailController.text = client.confirmarEmail;
+      cliente.setConfirmarEmail(client.confirmarEmail);
+
+      final formattedDate =
+          fromDateTimeToDateUsingPattern(DateTime.parse(client.dataNascFund));
+      _dataNascFundController.text = formattedDate;
+      cliente.setDataNascFund(formattedDate);
+    }
   }
 
   void _handleDataDeFundacaoChanged(
@@ -83,23 +115,41 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
       ),
     );
 
-    await ApiService().postClient(
-        cliente.nomeRazao,
-        cliente.cpfCnpj,
-        cliente.rg,
-        fromDateUsingPatternToFormattedString(cliente.dataNascFund),
-        cliente.email,
-        cliente.confirmarEmail,
-        keepOnlyDigits(cliente.telefone));
-
-    print(cliente.nomeRazao);
-    print(cliente.cpfCnpj);
-    print(cliente.email);
-    print(cliente.dataNascFund);
+    if (widget.clientId != null) {
+      // Se o ID do cliente estiver definido, chama o método de atualização
+      await updateClient();
+    } else {
+      // Caso contrário, chama o método de criação de cliente
+      await createClient();
+    }
 
     if (!_formKey.currentState!.validate()) return;
 
     cliente.clearForm();
+  }
+
+  Future<void> createClient() async {
+    await ApiService().postClient(
+        cliente.nomeRazao,
+        cliente.cpfCnpj,
+        cliente.rg,
+        cliente
+            .dataNascFund, //fromDateUsingPatternToFormattedString(cliente.dataNascFund),
+        cliente.email,
+        cliente.confirmarEmail,
+        keepOnlyDigits(cliente.telefone));
+  }
+
+  Future<void> updateClient() async {
+    await ApiService().putClient(
+        widget.clientId!,
+        cliente.nomeRazao,
+        cliente.cpfCnpj,
+        cliente.rg,
+        cliente.dataNascFund,
+        cliente.email,
+        cliente.confirmarEmail,
+        keepOnlyDigits(cliente.telefone));
   }
 
   @override
@@ -302,23 +352,21 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
         bottomNavigationBar: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Observer(
-              builder: (context) => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Button(
-                    flavor: ButtonFlavor.outlined,
-                    onPressed: _cancel,
-                    child: const Text('CANCELAR'),
-                  ),
-                  Button(
-                    flavor: ButtonFlavor.elevated,
-                    onPressed: _submit,
-                    child: const Text('ADICIONAR/EDITAR'),
-                  ),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Button(
+                  flavor: ButtonFlavor.outlined,
+                  onPressed: _cancel,
+                  child: const Text('CANCELAR'),
+                ),
+                Button(
+                  flavor: ButtonFlavor.elevated,
+                  onPressed: _submit,
+                  child: const Text('ADICIONAR/EDITAR'),
+                ),
+              ],
             ),
           ),
         ),

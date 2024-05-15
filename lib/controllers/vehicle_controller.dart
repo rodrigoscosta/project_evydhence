@@ -45,6 +45,7 @@ class VehicleController with Store {
 
   VehicleModel createClientFromForm() {
     return VehicleModel(
+        idCliente: idCliente,
         idVeiculo: idVeiculo,
         placa: placa,
         marca: marca,
@@ -53,6 +54,18 @@ class VehicleController with Store {
         anoFabricacao: anoFabricacao,
         anoModelo: anoModelo);
   }
+
+  @observable
+  int indexVehicle = 0;
+
+  @action
+  void setIndexVehicle(int value) => indexVehicle = value;
+
+  @observable
+  int idCliente = 0;
+
+  @action
+  void setId(int value) => idCliente = value;
 
   @observable
   int idVeiculo = 0;

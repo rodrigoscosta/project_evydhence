@@ -7,6 +7,7 @@ String vehicleModelToJson(List<VehicleModel> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class VehicleModel {
+  int idCliente;
   int idVeiculo;
   String placa;
   String marca;
@@ -16,6 +17,7 @@ class VehicleModel {
   String anoModelo;
 
   VehicleModel({
+    required this.idCliente,
     required this.idVeiculo,
     required this.placa,
     required this.marca,
@@ -26,6 +28,7 @@ class VehicleModel {
   });
 
   factory VehicleModel.fromJson(Map<String, dynamic> json) => VehicleModel(
+      idCliente: json['idCliente'],
       idVeiculo: json['idVeiculo'],
       placa: json['placa'],
       marca: json['marca'],
@@ -35,6 +38,7 @@ class VehicleModel {
       anoModelo: json['anoModelo']);
   
   Map<String, dynamic> toJson() => {
+        "idCliente": idCliente,
         "idVeiculo": idVeiculo,
         "placa": placa,
         "marca": marca,

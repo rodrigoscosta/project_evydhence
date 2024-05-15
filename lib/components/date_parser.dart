@@ -36,13 +36,4 @@ String fromDateTimeToDateUsingPattern(DateTime dateTime) {
   return '$day/$month/$year';
 }
 
-/// parse [DateTime] to 'dd/mm/yyyy hh:ss:mm'
-String convertePadraoData(DateTime dateTime) {
-  final day = _leadingZeroInt(dateTime.day);
-  final month = _leadingZeroInt(dateTime.month);
-  final year = dateTime.year.toString();
-
-  return '$year-$month-$day';
-}
-
 String _leadingZeroInt(int number) => number.toString().padLeft(2, '0');
