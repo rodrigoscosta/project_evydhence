@@ -161,6 +161,9 @@ class _ClientListPageState extends State<ClientListPage> {
                           'CPF/CNPJ: ${_cpfCnpjMask.format(_clientModel![index].cpfCnpj)}',
                         ),
                         Text(
+                          'RG: ${_clientModel![index].rg}',
+                        ),
+                        Text(
                           'Data de Nascimento: ${fromDateTimeToDateUsingPattern(DateTime.parse(_clientModel![index].dataNascFund))}',
                         ),
                         Text(
