@@ -77,37 +77,65 @@ class _VehicleListPagePageState extends State<VehicleListPage> {
       body: ListView.builder(
         itemCount: _vehicleModel!.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            leading: avatarVehicle,
-            title: Text(_vehicleModel![index].placa),
-            subtitle: Text(_vehicleModel![index].modelo),
-            trailing: SizedBox(
-              width: 120,
-              child: Row(
+          return Card(
+            child: ListTile(
+              leading: avatarVehicle,
+              title: Text(_vehicleModel![index].placa),
+              subtitle: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => VehicleRegisterForm(
-                          vehicle: _vehicleModel![index],
-                          vehicleId: _vehicleModel![index].idVeiculo,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Marca: ${_vehicleModel![index].marca}',
                         ),
-                      ));
-                      veiculo.setIndexVehicle(index);
-                    },
-                    icon: const Icon(Icons.edit),
-                    tooltip: 'Editar veículo',
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await ApiService()
-                          .deleteVehicle(_vehicleModel![index].idVeiculo);
-                      _getData();
-                    },
-                    icon: const Icon(Icons.delete),
-                    tooltip: 'Deletar veículo',
+                        Text(
+                          'Modelo: ${_vehicleModel![index].modelo}',
+                        ),
+                        Text(
+                          'Tipo veículo: ${_vehicleModel![index].tipoVeiculo}',
+                        ),
+                        Text(
+                          'Ano fabricação: ${_vehicleModel![index].anoFabricacao}',
+                        ),
+                        Text(
+                          'Ano modelo: ${_vehicleModel![index].anoModelo}',
+                        ),
+                      ],
+                    ),
                   ),
                 ],
+              ),
+              trailing: SizedBox(
+                width: 120,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => VehicleRegisterForm(
+                            vehicle: _vehicleModel![index],
+                            vehicleId: _vehicleModel![index].idVeiculo,
+                          ),
+                        ));
+                        veiculo.setIndexVehicle(index);
+                      },
+                      icon: const Icon(Icons.edit),
+                      tooltip: 'Editar veículo',
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        await ApiService()
+                            .deleteVehicle(_vehicleModel![index].idVeiculo);
+                        _getData();
+                      },
+                      icon: const Icon(Icons.delete),
+                      tooltip: 'Deletar veículo',
+                    ),
+                  ],
+                ),
               ),
             ),
           );

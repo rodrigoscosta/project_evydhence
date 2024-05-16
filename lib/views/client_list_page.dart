@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/components/button.dart';
+import 'package:project_evydhence/components/cpf_cnpj_mask.dart';
+import 'package:project_evydhence/components/date_parser.dart';
+import 'package:project_evydhence/components/phone_mask.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
 import 'package:project_evydhence/models/client_model.dart';
 import 'package:project_evydhence/routes/app_routes.dart';
@@ -19,6 +22,8 @@ class _ClientListPageState extends State<ClientListPage> {
   final cliente = GetIt.I<ClientController>();
   bool _isInitializing = true;
   final avatarClient = const CircleAvatar(child: Icon(Icons.person));
+  final _cpfCnpjMask = CpfCnpjMask();
+  final _phoneMask = PhoneMask();
 
   @override
   void didChangeDependencies() {
@@ -141,47 +146,72 @@ class _ClientListPageState extends State<ClientListPage> {
       body: ListView.builder(
         itemCount: _clientModel!.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            leading: avatarClient,
-            title: Text(_clientModel![index].nomeRazao),
-            subtitle: Text(_clientModel![index].email),
-            trailing: SizedBox(
-              width: 120,
-              child: Row(
+          return Card(
+            child: ListTile(
+              leading: avatarClient,
+              title: Text(_clientModel![index].nomeRazao),
+              subtitle: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(AppRoutes.vehiclePage,
-                          arguments: _clientModel![index].idClient);
-
-                      cliente.setId(_clientModel![index].idClient);
-                    },
-                    icon: const Icon(Icons.directions_car),
-                    tooltip: 'Veículos',
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ClientRegisterForm(
-                          client: _clientModel![index],
-                          clientId: _clientModel![index].idClient,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'CPF/CNPJ: ${_cpfCnpjMask.format(_clientModel![index].cpfCnpj)}',
                         ),
-                      ));
-                      cliente.setIndexClient(index);
-                    },
-                    icon: const Icon(Icons.edit),
-                    tooltip: 'Editar cliente',
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await ApiService()
-                          .deleteClient(_clientModel![index].idClient);
-                      _getData();
-                    },
-                    icon: const Icon(Icons.delete),
-                    tooltip: 'Deletar cliente',
+                        Text(
+                          'Data de Nascimento: ${fromDateTimeToDateUsingPattern(DateTime.parse(_clientModel![index].dataNascFund))}',
+                        ),
+                        Text(
+                          'Telefone: ${_phoneMask.format(_clientModel![index].telefone)}',
+                        ),
+                        Text(
+                          'Email: ${_clientModel![index].email}',
+                        ),
+                      ],
+                    ),
                   ),
                 ],
+              ),
+              trailing: SizedBox(
+                width: 120,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(AppRoutes.vehiclePage,
+                            arguments: _clientModel![index].idClient);
+
+                        cliente.setId(_clientModel![index].idClient);
+                      },
+                      icon: const Icon(Icons.directions_car),
+                      tooltip: 'Veículos',
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ClientRegisterForm(
+                            client: _clientModel![index],
+                            clientId: _clientModel![index].idClient,
+                          ),
+                        ));
+                        cliente.setIndexClient(index);
+                      },
+                      icon: const Icon(Icons.edit),
+                      tooltip: 'Editar cliente',
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        await ApiService()
+                            .deleteClient(_clientModel![index].idClient);
+                        _getData();
+                      },
+                      icon: const Icon(Icons.delete),
+                      tooltip: 'Deletar cliente',
+                    ),
+                  ],
+                ),
               ),
             ),
           );

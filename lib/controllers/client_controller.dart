@@ -4,7 +4,7 @@ import 'package:project_evydhence/models/client_model.dart';
 import 'package:project_evydhence/services/api_service.dart';
 
 class ClientController with Store {
-  ClientControllerBase({
+  clientControllerBase({
     ApiService? apiService,
   }) {
     _apiService = apiService ?? ApiService();
