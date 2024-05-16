@@ -60,7 +60,6 @@ class _VehicleListPagePageState extends State<VehicleListPage> {
           Container(
             margin: const EdgeInsets.fromLTRB(30.0, 0, 30.0, 0),
             child: IconButton(
-              //padding: const EdgeInsets.fromLTRB(30.0, 0, 30.0, 0),
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   AppRoutes.vehicleForm,

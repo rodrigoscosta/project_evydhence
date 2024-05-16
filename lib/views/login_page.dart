@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:project_evydhence/components/button.dart';
 import 'package:project_evydhence/components/text_input_form_field.dart';
-import 'package:project_evydhence/views/client_list_page.dart';
+import 'package:project_evydhence/routes/app_routes.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
-  
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -20,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _enableSubmitButton = false;
   bool _isHidden = true;
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -40,22 +41,21 @@ class _LoginPageState extends State<LoginPage> {
 
   _handleLogin(String usuario, String senha) async {
     setState(() {
+      _errorMessage = '';
       _isLoading = true;
     });
 
-    return _successfulLoginRedirect();
+    final login = usuario == 'admin' && senha == 'admin';
+    final loginSucceeded = login;
+    if (loginSucceeded) {
+      return _successfulLoginRedirect();
+    }
 
-    // final result = await _authService.login(usuario, senha);
-    // final loginSucceeded = result.item1;
-    // final loginErrors = result.item2;
-    // if (loginSucceeded) {
-    //   return _successfulLoginRedirect();
-    // }
-
-    // setState(() {
-    //   _senhaController.clear();
-    //   _isLoading = false;
-    // });
+    setState(() {
+      _senhaController.clear();
+      _isLoading = false;
+      _errorMessage = 'Usuário ou senha incorretos';
+    });
   }
 
   _onLoginButtonPressed() async {
@@ -88,11 +88,45 @@ class _LoginPageState extends State<LoginPage> {
     return usuario.isNotEmpty && senha.isNotEmpty;
   }
 
-  _successfulLoginRedirect() => Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const ClientListPage()), //Trocar para a page seguinte
+  _successfulLoginRedirect() => Navigator.of(context).pushNamed(
+        AppRoutes.clientPage,
+      );
+
+  _buildErrorAlert() => SizedBox(
+        height: 80.0,
+        width: double.infinity,
+        child: Container(
+          padding: const EdgeInsets.all(18.0),
+          decoration: const BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                width: 4.0,
+                color: Color.fromRGBO(182, 22, 22, 1),
+              ),
+            ),
+            color: Color.fromRGBO(241, 141, 141, 1),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 8.0),
+                child: const Icon(
+                  Icons.cancel,
+                  color: Color.fromRGBO(182, 22, 22, 1),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  _errorMessage,
+                  style: const TextStyle(
+                    color: Color.fromRGBO(0, 0, 17, 1),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       );
 
   Future<bool> _onWillPop() async {
@@ -164,8 +198,8 @@ class _LoginPageState extends State<LoginPage> {
                             child: Wrap(
                               runSpacing: 26.0,
                               children: [
-                                // if (_errorMessage.isNotEmpty)
-                                //   _buildErrorAlert(),
+                                if (_errorMessage.isNotEmpty)
+                                  _buildErrorAlert(),
                                 TextInputFormField(
                                   //enabled: !_isLoading,
                                   controller: _usuarioController,

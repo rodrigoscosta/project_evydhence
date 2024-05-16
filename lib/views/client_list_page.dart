@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/components/button.dart';
 import 'package:project_evydhence/components/cpf_cnpj_mask.dart';
@@ -58,6 +59,9 @@ class _ClientListPageState extends State<ClientListPage> {
           content: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
             decoration: const InputDecoration(
               labelText: 'Digite o CPF (apenas números)',
             ),
@@ -71,12 +75,10 @@ class _ClientListPageState extends State<ClientListPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                // int id = int.tryParse(controller.text) ?? -1;
-                // ClientModel? result = await ApiService().getClient(id);
                 String cpfCnpj = controller.text;
                 ClientModel? result = await ApiService().getClient(cpfCnpj);
                 if (result != null) {
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                   showResult(context, result);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -121,7 +123,6 @@ class _ClientListPageState extends State<ClientListPage> {
           Container(
             margin: const EdgeInsets.fromLTRB(30.0, 0, 30.0, 0),
             child: IconButton(
-              //padding: const EdgeInsets.fromLTRB(30.0, 0, 30.0, 0),
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   AppRoutes.clientForm,

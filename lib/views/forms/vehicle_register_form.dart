@@ -94,7 +94,7 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
       // Se o ID do cliente estiver definido, chama o método de atualização
       await updateVehicle();
     } else {
-      // Caso contrário, chama o método de criação de cliente
+      // Caso contrário, chama o método de criação de veículo
       await createVehicle();
     }
 
@@ -137,115 +137,113 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
       },
       child: Scaffold(
         body: SingleChildScrollView(
-          child: Observer(
-            builder: (context) => Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xffE9E9EF),
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xffE9E9EF),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Adicionar veículo',
+                        style: TextStyle(
+                          color: Color(0xff484853),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Adicionar veículo',
-                          style: TextStyle(
-                            color: Color(0xff484853),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        color: const Color(0xff74747E),
+                        onPressed: _cancel,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 29.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            margin:
+                                const EdgeInsets.only(top: 30.0, bottom: 26.0),
+                            child: const Text('Preencha os campos abaixo'),
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          color: const Color(0xff74747E),
-                          onPressed: _cancel,
-                        ),
-                      ],
-                    ),
+                          Wrap(
+                            runSpacing: 26.0,
+                            children: [
+                              TextInputFormField(
+                                labelText: 'Placa do veículo',
+                                required: true,
+                                controller: _placaController,
+                                keyboardType: TextInputType.text,
+                                onChanged: veiculo.setPlaca,
+                                maxLength: 20,
+                              ),
+                              TextInputFormField(
+                                labelText: 'Marca do veículo',
+                                required: true,
+                                controller: _marcaController,
+                                keyboardType: TextInputType.text,
+                                onChanged: veiculo.setMarca,
+                              ),
+                              TextInputFormField(
+                                labelText: 'Modelo do veículo',
+                                required: true,
+                                controller: _modeloController,
+                                keyboardType: TextInputType.text,
+                                onChanged: veiculo.setModelo,
+                                maxLength: 20,
+                              ),
+                              TextInputFormField(
+                                labelText: 'Tipo do veículo',
+                                required: true,
+                                controller: _tipoVeiculoController,
+                                keyboardType: TextInputType.text,
+                                onChanged: veiculo.setTipoVeiculo,
+                                maxLength: 20,
+                              ),
+                              TextInputFormField(
+                                labelText: 'Ano de fabricação',
+                                required: true,
+                                controller: _anoFabricacaoController,
+                                keyboardType: TextInputType.visiblePassword,
+                                onChanged: veiculo.setAnoFabricacao,
+                                maxLength: 4,
+                              ),
+                              TextInputFormField(
+                                labelText: 'Ano do modelo',
+                                required: true,
+                                controller: _anoModeloEmailController,
+                                keyboardType: TextInputType.visiblePassword,
+                                onChanged: veiculo.setAnoModelo,
+                                maxLength: 4,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 29.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(
-                                  top: 30.0, bottom: 26.0),
-                              child: const Text('Preencha os campos abaixo'),
-                            ),
-                            Wrap(
-                              runSpacing: 26.0,
-                              children: [
-                                TextInputFormField(
-                                  labelText: 'Placa do veículo',
-                                  required: true,
-                                  controller: _placaController,
-                                  keyboardType: TextInputType.text,
-                                  onChanged: veiculo.setPlaca,
-                                  maxLength: 20,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'Marca do veículo',
-                                  required: true,
-                                  controller: _marcaController,
-                                  keyboardType: TextInputType.text,
-                                  onChanged: veiculo.setMarca,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'Modelo do veículo',
-                                  required: true,
-                                  controller: _modeloController,
-                                  keyboardType: TextInputType.text,
-                                  onChanged: veiculo.setModelo,
-                                  maxLength: 20,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'Tipo do veículo',
-                                  required: true,
-                                  controller: _tipoVeiculoController,
-                                  keyboardType: TextInputType.text,
-                                  onChanged: veiculo.setTipoVeiculo,
-                                  maxLength: 20,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'Ano de fabricação',
-                                  required: true,
-                                  controller: _anoFabricacaoController,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  onChanged: veiculo.setAnoFabricacao,
-                                  maxLength: 4,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'Ano do modelo',
-                                  required: true,
-                                  controller: _anoModeloEmailController,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  onChanged: veiculo.setAnoModelo,
-                                  maxLength: 4,
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -264,8 +262,7 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
                   ),
                   Button(
                     flavor: ButtonFlavor.elevated,
-                    onPressed:
-                        _submit, //cliente.isFormComplete ? _submit : null,
+                    onPressed: _submit,
                     child: const Text('ADICIONAR/EDITAR'),
                   ),
                 ],

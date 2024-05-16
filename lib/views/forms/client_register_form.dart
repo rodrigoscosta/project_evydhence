@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/components/button.dart';
 import 'package:project_evydhence/components/cpf_cnpj_mask.dart';
@@ -162,189 +161,187 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
       },
       child: Scaffold(
         body: SingleChildScrollView(
-          child: Observer(
-            builder: (context) => Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xffE9E9EF),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Adicionar cliente',
-                          style: TextStyle(
-                            color: Color(0xff484853),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          color: const Color(0xff74747E),
-                          onPressed: _cancel,
-                        ),
-                      ],
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xffE9E9EF),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 29.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(
-                                  top: 30.0, bottom: 26.0),
-                              child: const Text('Preencha os campos abaixo'),
-                            ),
-                            Wrap(
-                              runSpacing: 26.0,
-                              children: [
-                                TextInputFormField(
-                                  labelText: 'Nome/Razão Social',
-                                  required: true,
-                                  controller: _nomeController,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  onChanged: cliente.setNomeRazao,
-                                  maxLength: 60,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'CPF/CNPJ',
-                                  required: true,
-                                  controller: _cpfCnpjController,
-                                  keyboardType: TextInputType.number,
-                                  onChanged: cliente.setCpfCnpj,
-                                  inputFormatters: [_cpfCnpjMask],
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'RG',
-                                  required: true,
-                                  controller: _rgController,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  onChanged: cliente.setRg,
-                                  maxLength: 20,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'Data de Nascimento/Fundação',
-                                  controller: _dataNascFundController,
-                                  required: true,
-                                  keyboardType: TextInputType.datetime,
-                                  inputFormatters: [DateMask()],
-                                  onChanged: (value) {
-                                    if (isUsingDatePattern(value)) {
-                                      _handleDataDeFundacaoChanged(value);
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      icon: const Icon(Icons.event_rounded),
-                                      onPressed: () async {
-                                        final result = await showDatePicker(
-                                          context: context,
-                                          locale: const Locale('pt', 'BR'),
-                                          initialDate:
-                                              cliente.dataFundacaoAsDateTime ??
-                                                  DateTime.now(),
-                                          firstDate: DateTime(1900),
-                                          lastDate: DateTime.now(),
-                                          helpText:
-                                              'Selecione a data de fundação',
-                                          cancelText: 'Cancelar',
-                                          confirmText: 'Confirmar',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Adicionar cliente',
+                        style: TextStyle(
+                          color: Color(0xff484853),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        color: const Color(0xff74747E),
+                        onPressed: _cancel,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 29.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            margin:
+                                const EdgeInsets.only(top: 30.0, bottom: 26.0),
+                            child: const Text('Preencha os campos abaixo'),
+                          ),
+                          Wrap(
+                            runSpacing: 26.0,
+                            children: [
+                              TextInputFormField(
+                                labelText: 'Nome/Razão Social',
+                                required: true,
+                                controller: _nomeController,
+                                keyboardType: TextInputType.visiblePassword,
+                                onChanged: cliente.setNomeRazao,
+                                maxLength: 60,
+                              ),
+                              TextInputFormField(
+                                labelText: 'CPF/CNPJ',
+                                required: true,
+                                controller: _cpfCnpjController,
+                                keyboardType: TextInputType.number,
+                                onChanged: cliente.setCpfCnpj,
+                                inputFormatters: [_cpfCnpjMask],
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                              ),
+                              TextInputFormField(
+                                labelText: 'RG',
+                                required: true,
+                                controller: _rgController,
+                                keyboardType: TextInputType.visiblePassword,
+                                onChanged: cliente.setRg,
+                                maxLength: 20,
+                              ),
+                              TextInputFormField(
+                                labelText: 'Data de Nascimento/Fundação',
+                                controller: _dataNascFundController,
+                                required: true,
+                                keyboardType: TextInputType.datetime,
+                                inputFormatters: [DateMask()],
+                                onChanged: (value) {
+                                  if (isUsingDatePattern(value)) {
+                                    _handleDataDeFundacaoChanged(value);
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  suffixIcon: IconButton(
+                                    icon: const Icon(Icons.event_rounded),
+                                    onPressed: () async {
+                                      final result = await showDatePicker(
+                                        context: context,
+                                        locale: const Locale('pt', 'BR'),
+                                        initialDate:
+                                            cliente.dataFundacaoAsDateTime ??
+                                                DateTime.now(),
+                                        firstDate: DateTime(1900),
+                                        lastDate: DateTime.now(),
+                                        helpText:
+                                            'Selecione a data de fundação',
+                                        cancelText: 'Cancelar',
+                                        confirmText: 'Confirmar',
+                                      );
+                                      if (result != null) {
+                                        _handleDataDeFundacaoChanged(
+                                          fromDateUsingPatternToFormattedString(
+                                              result.toString()),
+                                          changeControllerText: true,
                                         );
-                                        if (result != null) {
-                                          _handleDataDeFundacaoChanged(
-                                            fromDateUsingPatternToFormattedString(
-                                                result.toString()),
-                                            changeControllerText: true,
-                                          );
-                                        }
-                                      },
-                                    ),
+                                      }
+                                    },
                                   ),
                                 ),
-                                TextInputFormField(
-                                  labelText: 'Telefone',
-                                  required: true,
-                                  controller: _telefoneController,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [_phoneMask],
-                                  onChanged: cliente.setTelefone,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return null;
-                                    }
-                                    if (!_phoneMask.validationRegExp
-                                        .hasMatch(value)) {
-                                      return 'Telefone incompleto';
-                                    }
+                              ),
+                              TextInputFormField(
+                                labelText: 'Telefone',
+                                required: true,
+                                controller: _telefoneController,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [_phoneMask],
+                                onChanged: cliente.setTelefone,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
                                     return null;
-                                  },
-                                ),
-                                TextInputFormField(
-                                  labelText: 'Email',
-                                  required: true,
-                                  maxLength: 60,
-                                  controller: _emailController,
-                                  keyboardType: TextInputType.emailAddress,
-                                  onChanged: cliente.setEmail,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return null;
-                                    }
-                                    return emailRegExp.hasMatch(value)
-                                        ? null
-                                        : 'Email inválido';
-                                  },
-                                  inputFormatters: [LowerCaseTextFormatter()],
-                                  textCapitalization: TextCapitalization.none,
-                                  enableInteractiveSelection: false,
-                                ),
-                                TextInputFormField(
-                                  labelText: 'Confirmar email',
-                                  required: true,
-                                  maxLength: 60,
-                                  controller: _confirmarEmailController,
-                                  keyboardType: TextInputType.emailAddress,
-                                  onChanged: cliente.setConfirmarEmail,
-                                  validator: (text) {
-                                    if (text == null || text.isEmpty) {
-                                      return null;
-                                    }
-                                    return cliente.confirmarEmailEqualsToEmail
-                                        ? null
-                                        : 'Email diferente do digitado';
-                                  },
-                                  inputFormatters: [LowerCaseTextFormatter()],
-                                  textCapitalization: TextCapitalization.none,
-                                  enableInteractiveSelection: false,
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
+                                  }
+                                  if (!_phoneMask.validationRegExp
+                                      .hasMatch(value)) {
+                                    return 'Telefone incompleto';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextInputFormField(
+                                labelText: 'Email',
+                                required: true,
+                                maxLength: 60,
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: cliente.setEmail,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return null;
+                                  }
+                                  return emailRegExp.hasMatch(value)
+                                      ? null
+                                      : 'Email inválido';
+                                },
+                                inputFormatters: [LowerCaseTextFormatter()],
+                                textCapitalization: TextCapitalization.none,
+                                enableInteractiveSelection: false,
+                              ),
+                              TextInputFormField(
+                                labelText: 'Confirmar email',
+                                required: true,
+                                maxLength: 60,
+                                controller: _confirmarEmailController,
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: cliente.setConfirmarEmail,
+                                validator: (text) {
+                                  if (text == null || text.isEmpty) {
+                                    return null;
+                                  }
+                                  return cliente.confirmarEmailEqualsToEmail
+                                      ? null
+                                      : 'Email diferente do digitado';
+                                },
+                                inputFormatters: [LowerCaseTextFormatter()],
+                                textCapitalization: TextCapitalization.none,
+                                enableInteractiveSelection: false,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
