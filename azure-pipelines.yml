@@ -7,13 +7,71 @@ trigger:
 - main
 
 pool:
-  vmImage: windows-latest
+  vmImage: 'windows-latest'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  buildConfiguration: 'Release'
+  outputDirectory: '$(Build.ArtifactStagingDirectory)/apks'
+  clientesPath: 'assets/clientes'
+  apkName: 'Consorcio'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+- stage: Build
+  jobs:
+  - job: BuildApks
+    steps:
+    - script: |
+        @echo OFF
+        for /D %%d in ($(Build.SourcesDirectory)\$(clientesPath)\*) do (
+          set cliente=%%~nd
+          set clientePath=$(Build.SourcesDirectory)\$(clientesPath)\%cliente%
+          set arquivoJks=$(Build.SourcesDirectory)\android-key\%cliente%.jks
+          set ApkName=Consorcio
+
+          echo +-------------------------------------------------+
+          echo | Sobrescrevendo arquivos de configuracao         |
+          echo +-------------------------------------------------+
+          xcopy %clientePath%\Icons\ android\app\src\main\res\ /s /h /e /k /f /c /q /y
+          copy %clientePath%\dotenv dotenv /Y
+          copy %clientePath%\dotenv assets\dotenv /Y
+          copy %clientePath%\AndroidManifest.xml android\app\src\main\AndroidManifest.xml /y
+          copy %clientePath%\AndroidManifest.xml android\app\src\debug\AndroidManifest.xml /y
+          copy %clientePath%\build.gradle android\app\build.gradle /Y
+          copy %clientePath%\MainActivity.kt android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt /y
+          copy %clientePath%\key.properties android\key.properties /y
+          copy %clientePath%\images\background.png images\background.png /y
+          copy %clientePath%\images\icon.png images\icon.png /y
+
+          echo +-------------------------------------------------+
+          echo | Limpando build anterior...                      |
+          echo +-------------------------------------------------+
+          flutter clean
+
+          echo +-------------------------------------------------+
+          echo | Gerando APK release nao assinado...             |
+          echo +-------------------------------------------------+
+          flutter build apk
+          copy build\app\outputs\flutter-apk\app-release.apk %cliente%%ApkName%app-release.apk
+
+          echo +-------------------------------------------------+
+          echo | Gerando AAB nao assinado...                     |
+          echo +-------------------------------------------------+
+          flutter build appbundle
+
+          echo +-------------------------------------------------+
+          echo | Processo de assinatura do APK...                |
+          echo +-------------------------------------------------+
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore %arquivoJks% -storepass %cliente% build\app\outputs\bundle\release\app-release.aab %cliente%
+          copy build\app\outputs\bundle\release\app-release.aab %cliente%%ApkName%Assinado.aab
+        )
+      displayName: 'Build dos APKs para todos os clientes'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(outputDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+      displayName: 'Publish APKs'
+
+
+
