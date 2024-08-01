@@ -1,0 +1,11 @@
+# API URLs
+CONSORCIO_API_URL=https://sqcanais-apps.sinqia.com.br/APIVendas
+CONSORCIADO_API_URL=https://sqcanais-apps.sinqia.com.br/APIConsorciado
+
+# ETC
+APLICACAO=PLENO
+COMPANY_ID=1
+
+# COLOR
+PRIMARY_COLOR=FA4616 
+SECONDARY_COLOR=742153
