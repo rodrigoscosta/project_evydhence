@@ -22,25 +22,26 @@ stages:
     steps:
     - script: |
         @echo OFF
-        for /D %%d in ($(Build.SourcesDirectory)\$(clientesPath)\*) do (
-          set cliente=%%~nd
-          set clientePath=$(Build.SourcesDirectory)\$(clientesPath)\%cliente%
-          set arquivoJks=$(Build.SourcesDirectory)\android-key\%cliente%.jks
-          set ApkName=Consorcio
+        SETLOCAL ENABLEDELAYEDEXPANSION
+        for /D %%d in ("$(Build.SourcesDirectory)\$(clientesPath)\*") do (
+          set "cliente=%%~nd"
+          set "clientePath=$(Build.SourcesDirectory)\$(clientesPath)\!cliente!"
+          set "arquivoJks=$(Build.SourcesDirectory)\android-key\!cliente!.jks"
+          set "ApkName=Consorcio"
 
           echo +-------------------------------------------------+
           echo | Sobrescrevendo arquivos de configuracao         |
           echo +-------------------------------------------------+
-          xcopy %clientePath%\Icons\ android\app\src\main\res\ /s /h /e /k /f /c /q /y
-          copy %clientePath%\dotenv dotenv /Y
-          copy %clientePath%\dotenv assets\dotenv /Y
-          copy %clientePath%\AndroidManifest.xml android\app\src\main\AndroidManifest.xml /y
-          copy %clientePath%\AndroidManifest.xml android\app\src\debug\AndroidManifest.xml /y
-          copy %clientePath%\build.gradle android\app\build.gradle /Y
-          copy %clientePath%\MainActivity.kt android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt /y
-          copy %clientePath%\key.properties android\key.properties /y
-          copy %clientePath%\images\background.png images\background.png /y
-          copy %clientePath%\images\icon.png images\icon.png /y
+          xcopy "!clientePath!\Icons\" "android\app\src\main\res\" /s /h /e /k /f /c /q /y
+          copy "!clientePath!\dotenv" "dotenv" /Y
+          copy "!clientePath!\dotenv" "assets\dotenv" /Y
+          copy "!clientePath!\AndroidManifest.xml" "android\app\src\main\AndroidManifest.xml" /y
+          copy "!clientePath!\AndroidManifest.xml" "android\app\src\debug\AndroidManifest.xml" /y
+          copy "!clientePath!\build.gradle" "android\app\build.gradle" /Y
+          copy "!clientePath!\MainActivity.kt" "android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt" /y
+          copy "!clientePath!\key.properties" "android\key.properties" /y
+          copy "!clientePath!\images\background.png" "images\background.png" /y
+          copy "!clientePath!\images\icon.png" "images\icon.png" /y
 
           echo +-------------------------------------------------+
           echo | Limpando build anterior...                      |
@@ -51,7 +52,7 @@ stages:
           echo | Gerando APK release nao assinado...             |
           echo +-------------------------------------------------+
           flutter build apk
-          copy build\app\outputs\flutter-apk\app-release.apk %cliente%%ApkName%app-release.apk
+          copy "build\app\outputs\flutter-apk\app-release.apk" "!cliente!!ApkName!app-release.apk"
 
           echo +-------------------------------------------------+
           echo | Gerando AAB nao assinado...                     |
@@ -61,9 +62,10 @@ stages:
           echo +-------------------------------------------------+
           echo | Processo de assinatura do APK...                |
           echo +-------------------------------------------------+
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore %arquivoJks% -storepass %cliente% build\app\outputs\bundle\release\app-release.aab %cliente%
-          copy build\app\outputs\bundle\release\app-release.aab %cliente%%ApkName%Assinado.aab
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "!arquivoJks!" -storepass "!cliente!" "build\app\outputs\bundle\release\app-release.aab" "!cliente!"
+          copy "build\app\outputs\bundle\release\app-release.aab" "!cliente!!ApkName!Assinado.aab"
         )
+        ENDLOCAL
       displayName: 'Build dos APKs para todos os clientes'
 
     - task: PublishBuildArtifacts@1
