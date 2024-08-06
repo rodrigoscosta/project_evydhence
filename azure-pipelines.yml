@@ -39,7 +39,7 @@ stages:
           Copy-Item "$clientePath\images\background.png" -Destination "images\background.png" -Force -ErrorAction SilentlyContinue
           Copy-Item "$clientePath\images\icon.png" -Destination "images\icon.png" -Force -ErrorAction SilentlyContinue
 
-          if (Test-Path -Path "android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt") {
+          if (Test-Path -Path "android\app\src\main\kotlin\com\example\project_evydhence\MainActivity.kt") {
             Write-Host "MainActivity.kt encontrado e copiado."
           } else {
             Write-Host "MainActivity.kt não encontrado. Pulando cópia deste arquivo."
