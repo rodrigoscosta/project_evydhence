@@ -34,7 +34,7 @@ stages:
           Copy-Item "$clientePath\AndroidManifest.xml" -Destination "android\app\src\main\AndroidManifest.xml" -Force -ErrorAction SilentlyContinue
           Copy-Item "$clientePath\AndroidManifest.xml" -Destination "android\app\src\debug\AndroidManifest.xml" -Force -ErrorAction SilentlyContinue
           Copy-Item "$clientePath\build.gradle" -Destination "android\app\build.gradle" -Force -ErrorAction SilentlyContinue
-          Copy-Item "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\project_evydhence\MainActivity.kt" -Force -ErrorAction SilentlyContinue
           Copy-Item "$clientePath\key.properties" -Destination "android\key.properties" -Force -ErrorAction SilentlyContinue
           Copy-Item "$clientePath\images\background.png" -Destination "images\background.png" -Force -ErrorAction SilentlyContinue
           Copy-Item "$clientePath\images\icon.png" -Destination "images\icon.png" -Force -ErrorAction SilentlyContinue
