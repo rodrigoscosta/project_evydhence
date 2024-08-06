@@ -23,7 +23,7 @@ stages:
     - script: |
         @echo OFF
         SETLOCAL ENABLEDELAYEDEXPANSION
-        for /D %%d in ("$(Build.SourcesDirectory)\$(clientesPath)\*") do (
+        for /D %d in ("$(Build.SourcesDirectory)\$(clientesPath)\*") do (
           set "cliente=%%~nd"
           set "clientePath=$(Build.SourcesDirectory)\$(clientesPath)\!cliente!"
           set "arquivoJks=$(Build.SourcesDirectory)\android-key\!cliente!.jks"
