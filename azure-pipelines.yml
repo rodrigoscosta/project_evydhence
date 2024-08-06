@@ -30,6 +30,8 @@ stages:
           set "ApkName=Consorcio"
 
           echo +-------------------------------------------------+
+          echo | Cliente: !cliente!                              |
+          echo +-------------------------------------------------+
           echo | Sobrescrevendo arquivos de configuracao         |
           echo +-------------------------------------------------+
           xcopy "!clientePath!\Icons\" "android\app\src\main\res\" /s /h /e /k /f /c /q /y
@@ -74,6 +76,3 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
       displayName: 'Publish APKs'
-
-
-
