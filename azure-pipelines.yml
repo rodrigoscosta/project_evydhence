@@ -76,10 +76,3 @@ stages:
         )
         ENDLOCAL
       displayName: 'Build dos APKs para todos os clientes'
-
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(outputDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
-      displayName: 'Publish APKs'
