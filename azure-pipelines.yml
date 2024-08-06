@@ -15,6 +15,13 @@ stages:
   jobs:
   - job: BuildApks
     steps:
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '11'
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: 'PreInstalled'
+      displayName: 'Instalar Java 11'
+
     - task: FlutterInstall@0
       inputs:
         mode: 'auto'
@@ -30,6 +37,11 @@ stages:
           $clientePath = "$(Build.SourcesDirectory)\$(clientesPath)\$cliente"
           $arquivoJks = "$(Build.SourcesDirectory)\android-key\$cliente.jks"
           $apkName = "Consorcio"
+
+          if (-Not (Test-Path -Path $arquivoJks)) {
+            Write-Host "Arquivo JKS não encontrado para o cliente: $cliente. Pulando este cliente."
+            return
+          }
 
           Write-Host "Cliente: $cliente"
           Write-Host "Sobrescrevendo arquivos de configuracao..."
