@@ -6,8 +6,8 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  outputDirectory: '$(Build.ArtifactStagingDirectory)'
-  clientesPath: 'assets\clientes'
+  outputDirectory: '$(Build.ArtifactStagingDirectory)/apks'
+  clientesPath: 'assets/clientes'
   apkName: 'Consorcio'
 
 stages:
@@ -20,7 +20,7 @@ stages:
         SETLOCAL ENABLEDELAYEDEXPANSION
         echo Build.SourcesDirectory: $(Build.SourcesDirectory)
         echo clientesPath: $(clientesPath)
-        echo Verificando diretórios em: $(Build.SourcesDirectory)\$(clientesPath)\*
+        echo Verificando diretórios em: "$(Build.SourcesDirectory)\$(clientesPath)\*"
 
         for /D %%d in ("$(Build.SourcesDirectory)\$(clientesPath)\*") do (
           echo Diretório encontrado: %%d
