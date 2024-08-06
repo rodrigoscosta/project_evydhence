@@ -21,8 +21,7 @@ stages:
   - job: BuildApks
     steps:
     - script: |
-        @echo OFF
-       
+        @echo OFF     
         for /D %%d in ("$(Build.SourcesDirectory)\$(clientesPath)\*") do (
           set "cliente=%%~nd"
           set "clientePath=$(Build.SourcesDirectory)\$(clientesPath)\!cliente!"
