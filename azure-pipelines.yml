@@ -28,30 +28,36 @@ stages:
           Write-Host "Cliente: $cliente"
           Write-Host "Sobrescrevendo arquivos de configuracao..."
 
-          Copy-Item "$clientePath\Icons\" -Destination "android\app\src\main\res\" -Recurse -Force
-          Copy-Item "$clientePath\dotenv" -Destination "dotenv" -Force
-          Copy-Item "$clientePath\dotenv" -Destination "assets\dotenv" -Force
-          Copy-Item "$clientePath\AndroidManifest.xml" -Destination "android\app\src\main\AndroidManifest.xml" -Force
-          Copy-Item "$clientePath\AndroidManifest.xml" -Destination "android\app\src\debug\AndroidManifest.xml" -Force
-          Copy-Item "$clientePath\build.gradle" -Destination "android\app\build.gradle" -Force
-          Copy-Item "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt" -Force
-          Copy-Item "$clientePath\key.properties" -Destination "android\key.properties" -Force
-          Copy-Item "$clientePath\images\background.png" -Destination "images\background.png" -Force
-          Copy-Item "$clientePath\images\icon.png" -Destination "images\icon.png" -Force
+          Copy-Item "$clientePath\Icons\" -Destination "android\app\src\main\res\" -Recurse -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\dotenv" -Destination "dotenv" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\dotenv" -Destination "assets\dotenv" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\AndroidManifest.xml" -Destination "android\app\src\main\AndroidManifest.xml" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\AndroidManifest.xml" -Destination "android\app\src\debug\AndroidManifest.xml" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\build.gradle" -Destination "android\app\build.gradle" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\key.properties" -Destination "android\key.properties" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\images\background.png" -Destination "images\background.png" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\images\icon.png" -Destination "images\icon.png" -Force -ErrorAction SilentlyContinue
+
+          if (Test-Path -Path "android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt") {
+            Write-Host "MainActivity.kt encontrado e copiado."
+          } else {
+            Write-Host "MainActivity.kt não encontrado. Pulando cópia deste arquivo."
+          }
 
           Write-Host "Limpando build anterior..."
           flutter clean
 
           Write-Host "Gerando APK release nao assinado..."
           flutter build apk
-          Copy-Item "build\app\outputs\flutter-apk\app-release.apk" -Destination "$env:outputDirectory\$cliente$apkName-app-release.apk" -Force
+          Copy-Item "build\app\outputs\flutter-apk\app-release.apk" -Destination "$env:outputDirectory\$cliente$apkName-app-release.apk" -Force -ErrorAction SilentlyContinue
 
           Write-Host "Gerando AAB nao assinado..."
           flutter build appbundle
 
           Write-Host "Processo de assinatura do APK..."
           jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$cliente" "build\app\outputs\bundle\release\app-release.aab" "$cliente"
-          Copy-Item "build\app\outputs\bundle\release\app-release.aab" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force
+          Copy-Item "build\app\outputs\bundle\release\app-release.aab" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
         }
       displayName: 'Build dos APKs para todos os clientes'
 
