@@ -7,7 +7,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
   outputDirectory: '$(Build.ArtifactStagingDirectory)/apks'
-  clientesPath: 'assets/clientes'
+  clientesPath: 'assets\clientes'
   apkName: 'Consorcio'
 
 stages:
