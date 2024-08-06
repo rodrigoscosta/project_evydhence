@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
@@ -21,15 +16,28 @@ stages:
   - job: BuildApks
     steps:
     - script: |
-        @echo OFF     
+        @echo OFF
+        SETLOCAL ENABLEDELAYEDEXPANSION
+        echo Build.SourcesDirectory: $(Build.SourcesDirectory)
+        echo clientesPath: $(clientesPath)
+        echo Verificando diretórios em: $(Build.SourcesDirectory)\$(clientesPath)\*
+
         for /D %%d in ("$(Build.SourcesDirectory)\$(clientesPath)\*") do (
+          echo Diretório encontrado: %%d
           set "cliente=%%~nd"
+          echo Cliente: !cliente!
           set "clientePath=$(Build.SourcesDirectory)\$(clientesPath)\!cliente!"
+          echo clientePath: !clientePath!
           set "arquivoJks=$(Build.SourcesDirectory)\android-key\!cliente!.jks"
+          echo arquivoJks: !arquivoJks!
           set "ApkName=Consorcio"
+          echo ApkName: !ApkName!
 
           echo +-------------------------------------------------+
           echo | Cliente: !cliente!                              |
+          echo +-------------------------------------------------+
+          echo | clientePath: !clientePath!                      |
+          echo | arquivoJks: !arquivoJks!                        |
           echo +-------------------------------------------------+
           echo | Sobrescrevendo arquivos de configuracao         |
           echo +-------------------------------------------------+
@@ -66,6 +74,7 @@ stages:
           jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "!arquivoJks!" -storepass "!cliente!" "build\app\outputs\bundle\release\app-release.aab" "!cliente!"
           copy "build\app\outputs\bundle\release\app-release.aab" "!cliente!!ApkName!Assinado.aab"
         )
+        ENDLOCAL
       displayName: 'Build dos APKs para todos os clientes'
 
     - task: PublishBuildArtifacts@1
