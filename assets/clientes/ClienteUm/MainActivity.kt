@@ -1,4 +1,4 @@
-package br.com.sinqia.appconsorcio
+package br.com.clienteum.evydhence
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
