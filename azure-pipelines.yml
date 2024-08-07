@@ -35,7 +35,7 @@ stages:
         Get-ChildItem -Path "$(Build.SourcesDirectory)\$(clientesPath)" -Directory | ForEach-Object {
           $cliente = $_.Name
           $clientePath = "$(Build.SourcesDirectory)\$(clientesPath)\$cliente"
-          $arquivoJks = "$(Build.SourcesDirectory)\android-key\$cliente.jks"
+          $arquivoJks = "$(Build.SourcesDirectory)\$($clientePath)\android-key\$cliente.jks"
           $apkName = "Consorcio"
 
           if (-Not (Test-Path -Path $arquivoJks)) {
