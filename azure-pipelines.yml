@@ -30,22 +30,22 @@ stages:
 
     - powershell: |
         # Verifica se o diretorio do cliente existe
-        if (-Not (Test-Path -Path $clientesPath)) {
-          Write-Host "diretorio de clientes nao encontrado: $clientesPath"
+        if (-Not (Test-Path -Path $(clientesPath))) {
+          Write-Host "diretorio de clientes nao encontrado: $(clientesPath)"
           exit
         }
 
         # Obtem lista de subpastas no diretorio do cliente
-        $subpastas = Get-ChildItem -Path $clientesPath -Directory
+        $subpastas = Get-ChildItem -Path $(clientesPath) -Directory
 
         foreach ($pasta in $subpastas) {
           $cliente = $pasta.Name
-          $clientePath = Join-Path -Path $clientesPath -ChildPath $cliente
+          $clientePath = Join-Path -Path $(clientesPath) -ChildPath $cliente
           $alias = $cliente
           $arquivoJks = "android-key\$cliente.jks"
 
           # Verifica se o diretorio do cliente existe antes de processar
-          if (-Not (Test-Path -Path $clientePath)) {
+          if (-Not (Test-Path -Path $(clientesPath))) {
             Write-Host "diretorio nao encontrado para o cliente: $clientePath" -ForegroundColor Red
             continue
           }
