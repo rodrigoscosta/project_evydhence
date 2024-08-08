@@ -93,7 +93,7 @@ stages:
           }
 
           if (Test-Path -Path "$clientePath\MainActivity.kt") {
-            Copy-Item -Path "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt" -Force
+            Copy-Item -Path "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\MainActivity.kt" -Force
           }
           else {
             Write-Host "Arquivo MainActivity.kt nao encontrado para o cliente: $clientePath\MainActivity.kt" -ForegroundColor Red
