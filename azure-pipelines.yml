@@ -74,6 +74,10 @@ stages:
           flutter build appbundle
 
           Write-Host "Processo de assinatura do APK..."
+          $password = $cliente  # Aqui está a senha do keystore, que parece ser o nome do cliente
+          Write-Host "Keystore path: $arquivoJks"
+          Write-Host "Keystore password: $password"
+          
           jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$cliente" "build\app\outputs\bundle\release\app-release.aab" "$cliente"
           Copy-Item "build\app\outputs\bundle\release\app-release.aab" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
         }
