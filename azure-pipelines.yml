@@ -71,7 +71,8 @@ stages:
           Copy-Item "build\app\outputs\flutter-apk\app-release.apk" -Destination "$env:outputDirectory\$cliente$apkName-app-release.apk" -Force -ErrorAction SilentlyContinue
 
           Write-Host "Gerando AAB nao assinado..."
-          flutter build appbundle
+          $appBundleOutput = flutter build appbundle 2>&1
+          Write-Host $appBundleOutput
 
           # Verificação se o arquivo .aab foi gerado
           $aabPath = "build\app\outputs\bundle\release\app-release.aab"
