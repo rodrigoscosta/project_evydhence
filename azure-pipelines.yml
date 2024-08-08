@@ -128,6 +128,10 @@ stages:
           Write-Host "Limpando build anterior..."
           flutter clean
 
+          # Atualizar os pacotes
+          Write-Host "Atualizando os pacotes..."
+          flutter pub get
+
           # Gerar APK release nao assinado
           Write-Host "Gerando APK release nao assinado..."
           flutter build apk
