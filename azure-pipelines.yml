@@ -71,22 +71,14 @@ stages:
           Copy-Item "build\app\outputs\flutter-apk\app-release.apk" -Destination "$env:outputDirectory\$cliente$apkName-app-release.apk" -Force -ErrorAction SilentlyContinue
 
           Write-Host "Gerando AAB nao assinado..."
-          $appBundleOutput = flutter build appbundle 2>&1
-          Write-Host $appBundleOutput
+          flutter build appbundle
 
-          # Verificação se o arquivo .aab foi gerado
-          $aabPath = "build\app\outputs\bundle\release\app-release.aab"
-          if (-Not (Test-Path -Path $aabPath)) {
-          Write-Host "Erro: O arquivo $aabPath não foi encontrado. Verifique se o comando 'flutter build appbundle' foi executado corretamente."
-          return
-        }
-
-        Write-Host "Processo de assinatura do APK..."
-        $password = $cliente.ToLower()  # Converte o nome do cliente para minúsculas
-        Write-Host "Keystore path: $arquivoJks"
-        Write-Host "Keystore password: $password"
-        jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$password" "$aabPath" "$cliente"
-        Copy-Item "$aabPath" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
+          Write-Host "Processo de assinatura do APK..."
+          $password = $cliente.ToLower()  # Converte o nome do cliente para minúsculas
+          Write-Host "Keystore path: $arquivoJks"
+          Write-Host "Keystore password: $password"
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$password" "build\app\outputs\bundle\release\app-release.aab" "$cliente"
+          Copy-Item "build\app\outputs\bundle\release\app-release.aab" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
         }
       displayName: 'Build dos APKs para todos os clientes'
 
