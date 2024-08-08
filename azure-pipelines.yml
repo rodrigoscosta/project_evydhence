@@ -68,7 +68,7 @@ stages:
 
           Write-Host "Gerando APK release nao assinado..."
           flutter build apk
-          Copy-Item "build\app-release.apk" -Destination "$env:outputDirectory\$cliente$apkName-app-release.apk" -Force -ErrorAction SilentlyContinue
+          Copy-Item "build\app\outputs\flutter-apk\app-release.apk" -Destination "$env:outputDirectory\$cliente$apkName-app-release.apk" -Force -ErrorAction SilentlyContinue
 
           Write-Host "Gerando AAB nao assinado..."
           flutter build appbundle
@@ -77,8 +77,8 @@ stages:
           $password = $cliente.ToLower()  # Converte o nome do cliente para minúsculas
           Write-Host "Keystore path: $arquivoJks"
           Write-Host "Keystore password: $password"
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$password" "build\app-release.aab" "$cliente"
-          Copy-Item "build\app-release.aab" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$password" "build\app\outputs\bundle\release\app-release.aab" "$cliente"
+          Copy-Item "build\app\outputs\bundle\release\app-release.aab" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
         }
       displayName: 'Build dos APKs para todos os clientes'
 
