@@ -124,10 +124,6 @@ stages:
             continue
           }
 
-          # Criar JKS se necessário
-          if (-Not (Test-Path -Path $arquivoJks)) {
-            .\GeracaoJKS.bat $cliente
-          }
 
           # Limpar build anterior
           Write-Host "Limpando build anterior..."
