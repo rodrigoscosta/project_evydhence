@@ -21,7 +21,7 @@ stages:
         jdkArchitectureOption: 'x64'
         jdkSourceOption: 'PreInstalled'
       displayName: 'Instalar Java 11'
-      
+
     - task: FlutterInstall@0
       inputs:
         mode: 'auto'
@@ -30,144 +30,57 @@ stages:
         customVersion: '3.22.0'
 
     - powershell: |
-        # Verifica se o diretorio do cliente existe
-        if (-Not (Test-Path -Path $(clientesPath))) {
-          Write-Host "diretorio de clientes nao encontrado: $(clientesPath)"
-          exit
-        }
+        $ErrorActionPreference = 'Stop'
+        Write-Host "Iniciando build para todos os clientes..."
+        
+        Get-ChildItem -Path "$(Build.SourcesDirectory)\$(clientesPath)" -Directory | ForEach-Object {
+          $cliente = $_.Name
+          $clientePath = "$(Build.SourcesDirectory)\$(clientesPath)\$cliente"
+          $arquivoJks = "$(clientesPath)\$cliente\android-key\$cliente.jks"
+          $apkName = "Consorcio"
 
-        # Obtem lista de subpastas no diretorio do cliente
-        $subpastas = Get-ChildItem -Path $(clientesPath) -Directory
-
-        foreach ($pasta in $subpastas) {
-          $cliente = $pasta.Name
-          $clientePath = Join-Path -Path $(clientesPath) -ChildPath $cliente
-          $alias = $cliente
-          $arquivoJks = "android-key\$cliente.jks"
-
-          # Verifica se o diretorio do cliente existe antes de processar
-          if (-Not (Test-Path -Path $clientePath)) {
-            Write-Host "diretorio nao encontrado para o cliente: $clientePath" -ForegroundColor Red
-            continue
-          }
-          Write-Host $clientePath
-
-          Write-Host "========================================================="
-          Write-Host "Processando cliente: $cliente"
-          Write-Host "========================================================="
-
-          # Sobrescrever arquivos de configuracao
-          Write-Host "Sobrescrevendo arquivos de configuracao"
-
-          if (Test-Path -Path "$clientePath\Icons\") {
-            Copy-Item -Path "$clientePath\Icons\" -Destination "android\app\src\main\res\" -Recurse -Force
-          }
-          else {
-            Write-Host "Ícones nao encontrados para o cliente: $clientePath\Icons\" -ForegroundColor Red
-            continue
+          if (-Not (Test-Path -Path $arquivoJks)) {
+            Write-Host "Arquivo JKS não encontrado para o cliente: $cliente. Pulando este cliente."
+            return
           }
 
-          if (Test-Path -Path "$clientePath\dotenv") {
-            Copy-Item -Path "$clientePath\dotenv" -Destination "dotenv" -Force
-            Copy-Item -Path "$clientePath\dotenv" -Destination "assets\dotenv" -Force
-          }
-          else {
-            Write-Host "Arquivo dotenv nao encontrado para o cliente: $clientePath\dotenv" -ForegroundColor Red
-            continue
+          Write-Host "Cliente: $cliente"
+          Write-Host "Sobrescrevendo arquivos de configuracao..."
+
+          Copy-Item "$clientePath\Icons\" -Destination "android\app\src\main\res\" -Recurse -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\dotenv" -Destination "dotenv" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\dotenv" -Destination "assets\dotenv" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\AndroidManifest.xml" -Destination "android\app\src\main\AndroidManifest.xml" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\AndroidManifest.xml" -Destination "android\app\src\debug\AndroidManifest.xml" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\build.gradle" -Destination "android\app\build.gradle" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\project_evydhence\MainActivity.kt" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\key.properties" -Destination "android\key.properties" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\images\background.png" -Destination "images\background.png" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$clientePath\images\icon.png" -Destination "images\icon.png" -Force -ErrorAction SilentlyContinue
+
+          if (Test-Path -Path "android\app\src\main\kotlin\com\example\project_evydhence\MainActivity.kt") {
+            Write-Host "MainActivity.kt encontrado e copiado."
+          } else {
+            Write-Host "MainActivity.kt não encontrado. Pulando cópia deste arquivo."
           }
 
-          if (Test-Path -Path "$clientePath\AndroidManifest.xml") {
-            Copy-Item -Path "$clientePath\AndroidManifest.xml" -Destination "android\app\src\main\AndroidManifest.xml" -Force
-            Copy-Item -Path "$clientePath\AndroidManifest.xml" -Destination "android\app\src\debug\AndroidManifest.xml" -Force
-          }
-          else {
-            Write-Host "Arquivo AndroidManifest.xml nao encontrado para o cliente: $clientePath\AndroidManifest.xml" -ForegroundColor Red
-            continue
-          }
-
-          if (Test-Path -Path "$clientePath\build.gradle") {
-            Copy-Item -Path "$clientePath\build.gradle" -Destination "android\app\build.gradle" -Force
-          }
-          else {
-            Write-Host "Arquivo build.gradle nao encontrado para o cliente: $clientePath\build.gradle" -ForegroundColor Red
-            continue
-          }
-
-          if (Test-Path -Path "$clientePath\MainActivity.kt") {
-            Copy-Item -Path "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\MainActivity.kt" -Force
-          }
-          else {
-            Write-Host "Arquivo MainActivity.kt nao encontrado para o cliente: $clientePath\MainActivity.kt" -ForegroundColor Red
-            continue
-          }
-
-          if (Test-Path -Path "$clientePath\key.properties") {
-            Copy-Item -Path "$clientePath\key.properties" -Destination "android\key.properties" -Force
-          }
-          else {
-            Write-Host "Arquivo key.properties nao encontrado para o cliente: $clientePath\key.properties" -ForegroundColor Red
-            continue
-          }
-
-          if (Test-Path -Path "$clientePath\images\background.png") {
-            Copy-Item -Path "$clientePath\images\background.png" -Destination "images\background.png" -Force
-          }
-          else {
-            Write-Host "Imagem background.png nao encontrada para o cliente: $clientePath\images\background.png" -ForegroundColor Red
-            continue
-          }
-
-          if (Test-Path -Path "$clientePath\images\icon.png") {
-            Copy-Item -Path "$clientePath\images\icon.png" -Destination "images\icon.png" -Force
-          }
-          else {
-            Write-Host "Imagem icon.png nao encontrada para o cliente: $clientePath\images\icon.png" -ForegroundColor Red
-            continue
-          }
-
-          # Limpar build anterior
           Write-Host "Limpando build anterior..."
           flutter clean
 
-          # Atualizar os pacotes
-          Write-Host "Atualizando os pacotes..."
-          flutter pub get
-
-          # Gerar APK release nao assinado
           Write-Host "Gerando APK release nao assinado..."
           flutter build apk
-          $apkPath = "build\app\outputs\flutter-apk\app-release.apk"
-          if (Test-Path -Path $apkPath) {
-            Write-Host "APK gerado em: $apkPath"
-          } else {
-              Write-Host "APK não encontrado em $apkPath. Verifique outros diretórios."
-          }
+          Copy-Item "build\app\outputs\flutter-apk\app-release.apk" -Destination "$env:outputDirectory\$cliente$apkName-app-release.apk" -Force -ErrorAction SilentlyContinue
 
-          Write-Host "Copiando APK cliente $cliente$apkName"
-          Copy-Item -Path "build\app\outputs\flutter-apk\app-release.apk" -Destination "$cliente$apkName\app-release.apk"
-
-          # Gerar AAB nao assinado
           Write-Host "Gerando AAB nao assinado..."
           flutter build appbundle
 
-          # Criar diretório para arquivos assinados, se não existir
-          $assinadosPath = "assinados\$cliente"
-          if (-Not (Test-Path -Path $assinadosPath)) {
-            New-Item -ItemType Directory -Path $assinadosPath
-          }
-
-          # Assinar o APK/AAB
           Write-Host "Processo de assinatura do APK..."
-          & jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $arquivoJks -storepass $cliente "build\app\outputs\flutter-apk\app-release.apk" $alias
-          & jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $arquivoJks -storepass $cliente "build\app\outputs\bundle\release\app-release.aab" $alias
-
-          # Copiar arquivos assinados para o diretório de assinados
-          Copy-Item -Path "build\app\outputs\flutter-apk\app-release.apk" -Destination "$assinadosPath\app-release-assinado.apk" -Force
-          Copy-Item -Path "build\app\outputs\bundle\release\app-release.aab" -Destination "$assinadosPath\app-release-assinado.aab" -Force
-
-          Write-Host "Assinatura do APK realizada..."
+          $password = $cliente.ToLower()  # Converte o nome do cliente para minúsculas
+          Write-Host "Keystore path: $arquivoJks"
+          Write-Host "Keystore password: $password"
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$password" "build\app\outputs\bundle\release\app-release.aab" "$cliente"
+          Copy-Item "build\app\outputs\bundle\release\app-release.aab" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
         }
-
       displayName: 'Build dos APKs para todos os clientes'
 
     - task: PublishBuildArtifacts@1
