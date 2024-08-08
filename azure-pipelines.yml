@@ -131,13 +131,13 @@ stages:
 
           # Gerar APK release nao assinado
           Write-Host "Gerando APK release nao assinado..."
-          flutter build apk
+          flutter build apk --stacktrace
           Write-Host "Copiando APK cliente $cliente$apkName"
           Copy-Item -Path "build\app\outputs\flutter-apk\app-release.apk" -Destination "$cliente$apkName\app-release.apk"
 
           # Gerar AAB nao assinado
           Write-Host "Gerando AAB nao assinado..."
-          flutter build appbundle
+          flutter build appbundle --stacktrace
 
           # Criar diretório para arquivos assinados, se não existir
           $assinadosPath = "assinados\$cliente"
