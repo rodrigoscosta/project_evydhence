@@ -26,7 +26,8 @@ stages:
       inputs:
         mode: 'auto'
         channel: 'stable'
-        version: 'latest'
+        version: '3.22.0'
+      displayName: 'Instalação do Flutter
 
     - powershell: |
         # Verifica se o diretorio do cliente existe
