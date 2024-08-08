@@ -21,12 +21,13 @@ stages:
         jdkArchitectureOption: 'x64'
         jdkSourceOption: 'PreInstalled'
       displayName: 'Instalar Java 11'
-
+      
     - task: FlutterInstall@0
       inputs:
         mode: 'auto'
         channel: 'stable'
-        version: '3.22.0'
+        version: 'custom'
+        customVersion: '3.22.0'
 
     - powershell: |
         # Verifica se o diretorio do cliente existe
