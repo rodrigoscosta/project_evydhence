@@ -131,7 +131,6 @@ stages:
           # Gerar APK release nao assinado
           Write-Host "Gerando APK release nao assinado..."
           flutter build apk
-          Get-ChildItem -Path "build/app/outputs/flutter-apk/" -Recurse | Where-Object { $_.Name -like "*.apk" }
           $apkPath = "build/app/outputs/flutter-apk/app-release.apk"
           if (Test-Path -Path $apkPath) {
             Write-Host "APK gerado em: $apkPath"
