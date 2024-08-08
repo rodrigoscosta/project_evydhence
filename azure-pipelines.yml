@@ -30,17 +30,17 @@ stages:
 
     - powershell: |
         # Verifica se o diretorio do cliente existe
-        if (-Not (Test-Path -Path $pastaBase)) {
-          Write-Host "diretorio de clientes nao encontrado: $pastaBase"
+        if (-Not (Test-Path -Path $(clientesPath))) {
+          Write-Host "diretorio de clientes nao encontrado: $(clientesPath)"
           exit
         }
 
         # Obtem lista de subpastas no diretorio do cliente
-        $subpastas = Get-ChildItem -Path $pastaBase -Directory
+        $subpastas = Get-ChildItem -Path $(clientesPath) -Directory
 
         foreach ($pasta in $subpastas) {
           $cliente = $pasta.Name
-          $clientePath = Join-Path -Path $pastaBase -ChildPath $cliente
+          $clientePath = Join-Path -Path $(clientesPath) -ChildPath $cliente
           $alias = $cliente
           $arquivoJks = "android-key\$cliente.jks"
 
@@ -93,7 +93,7 @@ stages:
           }
 
           if (Test-Path -Path "$clientePath\MainActivity.kt") {
-            Copy-Item -Path "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\sinqia_appvendas\MainActivity.kt" -Force
+            Copy-Item -Path "$clientePath\MainActivity.kt" -Destination "android\app\src\main\kotlin\com\example\MainActivity.kt" -Force
           }
           else {
             Write-Host "Arquivo MainActivity.kt nao encontrado para o cliente: $clientePath\MainActivity.kt" -ForegroundColor Red
@@ -124,11 +124,6 @@ stages:
             continue
           }
 
-          # Criar JKS se necessário
-          if (-Not (Test-Path -Path $arquivoJks)) {
-            .\GeracaoJKS.bat $cliente
-          }
-
           # Limpar build anterior
           Write-Host "Limpando build anterior..."
           flutter clean
@@ -143,7 +138,6 @@ stages:
           } else {
               Write-Host "APK não encontrado em $apkPath. Verifique outros diretórios."
           }
-
 
           Write-Host "Copiando APK cliente $cliente$apkName"
           Copy-Item -Path "build\app\outputs\flutter-apk\app-release.apk" -Destination "$cliente$apkName\app-release.apk"
