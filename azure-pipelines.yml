@@ -130,7 +130,7 @@ stages:
       inputs:
         sourceFolder: '$(Build.ArtifactStagingDirectory)\apks'
         contents: '**/*.apk'
-        targetFolder: '/Clientes/Ancora/Sinqia_Para_Ancora/Temp'
+        targetFolder: '/Clientes/Ancora/Sinqia_Para_Ancora/AppCliente'
         host: 'sftp.sinqia.com.br'
         port: '22'
         username: 'rodrigo.scosta@sinqia.com.br'
