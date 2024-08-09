@@ -79,9 +79,7 @@ stages:
           # Renomeando o APK
           if (Test-Path -Path $apkPath) {
             Rename-Item -Path $apkPath -NewName $novoApkPath -Force
-            Write-Host "APK renomeado para $novoApkPath"
-    
-            
+            Write-Host "APK renomeado para $novoApkPath"           
           } else {
               Write-Host "Erro: O arquivo $apkPath não foi encontrado."
           }
@@ -98,14 +96,12 @@ stages:
           # Renomeando o AAB
           if (Test-Path -Path $aabPath) {
             Rename-Item -Path $aabPath -NewName $novoAabPath -Force
-            Write-Host "AAB renomeado para $novoAabPath"
-    
-            
+            Write-Host "AAB renomeado para $novoAabPath"           
           } else {
               Write-Host "Erro: O arquivo $aabPath não foi encontrado."
           }
 
-          Write-Host "Processo de assinatura do APK..."
+          Write-Host "Processo de assinatura do AAB..."
           $password = $cliente.ToLower()  # Converte o nome do cliente para minúsculas
           Write-Host "Keystore path: $arquivoJks"
           Write-Host "Keystore password: $password"
@@ -117,8 +113,9 @@ stages:
             New-Item -Path $destinationDir -ItemType Directory | Out-Null
           }
 
-          # Copiando o AAB assinado para a pasta de saída
+          # Copiando o AAB assinado e o APK para a pasta de saída
           Copy-Item $novoAabPath -Destination "$destinationDir\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
+          Copy-Item $novoApkPath -Destination "$destinationDir\$cliente$apkName-Assinado.apk" -Force -ErrorAction SilentlyContinue
         }
       displayName: 'Build dos APKs para todos os clientes'
 
