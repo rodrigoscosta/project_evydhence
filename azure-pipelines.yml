@@ -9,6 +9,7 @@ variables:
   outputDirectory: '$(Build.ArtifactStagingDirectory)\apks'
   clientesPath: 'assets\clientes'
   apkName: 'Consorcio'
+  pubspecFile: 'pubspec.yaml'
 
 stages:
 - stage: Build
@@ -118,6 +119,15 @@ stages:
           Copy-Item $novoApkPath -Destination "$destinationDir\$cliente$apkName-Assinado.apk" -Force -ErrorAction SilentlyContinue
         }
       displayName: 'Build dos APKs para todos os clientes'
+    
+    - powershell: |
+
+        # Extrair a versão do pubspec.yaml
+        $pubspecPath = "$(Build.SourcesDirectory)\$(pubspecFile)"
+        $version = (Select-String -Path $pubspecPath -Pattern 'version:\s*([\d.]+)' -AllMatches).Matches[0].Groups[1].Value
+        Write-Host "Versão extraída do pubspec.yaml: $version"
+
+      displayName: 'Verificar e criar diretório no SFTP'
 
     - task: PublishBuildArtifacts@1
       inputs:
@@ -130,7 +140,7 @@ stages:
       inputs:
         sourceFolder: '$(Build.ArtifactStagingDirectory)\apks'
         contents: '**/*.apk'
-        targetFolder: '/Clientes/Ancora/Sinqia_Para_Ancora/AppCliente'
+        targetFolder: '/Clientes/Ancora/Sinqia_Para_Ancora/AppConsorcio-v.$(version)'
         host: 'sftp.sinqia.com.br'
         port: '22'
         username: 'rodrigo.scosta@sinqia.com.br'
