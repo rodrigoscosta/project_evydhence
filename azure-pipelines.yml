@@ -76,7 +76,7 @@ stages:
           # Novo nome para o APK, mas com o caminho completo
           $novoApkPath = "$(Build.SourcesDirectory)\build\app\outputs\flutter-apk\$cliente$apkName-app-release.apk"
 
-          # Renomeando o APK
+          # Renomeando o APK gerado para NomeCliente-app-release.apk
           if (Test-Path -Path $apkPath) {
             Rename-Item -Path $apkPath -NewName $novoApkPath -Force
             Write-Host "APK renomeado para $novoApkPath"           
@@ -93,7 +93,7 @@ stages:
           # Novo nome para o AAB, mas com o caminho completo
           $novoAabPath = "$(Build.SourcesDirectory)\build\app\outputs\bundle\release\$cliente$apkName-app-release.aab"
 
-          # Renomeando o AAB
+          # Renomeando o AAB gerado para NomeCliente-app-release.aab"
           if (Test-Path -Path $aabPath) {
             Rename-Item -Path $aabPath -NewName $novoAabPath -Force
             Write-Host "AAB renomeado para $novoAabPath"           
@@ -113,7 +113,7 @@ stages:
             New-Item -Path $destinationDir -ItemType Directory | Out-Null
           }
 
-          # Copiando o AAB assinado e o APK para a pasta de saída
+          # Copiando o AAB assinado e o APK para a pasta apks\
           Copy-Item $novoAabPath -Destination "$destinationDir\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
           Copy-Item $novoApkPath -Destination "$destinationDir\$cliente$apkName-Assinado.apk" -Force -ErrorAction SilentlyContinue
         }
@@ -124,4 +124,4 @@ stages:
         pathToPublish: '$(outputDirectory)'
         artifactName: 'drop'
         publishLocation: 'Container'
-      displayName: 'Publish APKs'
+      displayName: 'Publicação dos apks e abbs gerados na pasta apks\'
