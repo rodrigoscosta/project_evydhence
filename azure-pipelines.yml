@@ -81,9 +81,7 @@ stages:
             Rename-Item -Path $apkPath -NewName $novoApkPath -Force
             Write-Host "APK renomeado para $novoApkPath"
     
-            # Copiando o APK renomeado para a pasta de saída
-            Copy-Item -Path $novoApkPath -Destination "$env:outputDirectory" -Force
-            Write-Host "APK copiado para $env:outputDirectory"
+            
           } else {
               Write-Host "Erro: O arquivo $apkPath não foi encontrado."
           }
@@ -102,9 +100,7 @@ stages:
             Rename-Item -Path $aabPath -NewName $novoAabPath -Force
             Write-Host "AAB renomeado para $novoAabPath"
     
-            # Copiando o AAB renomeado para a pasta de saída
-            Copy-Item -Path $novoAabPath -Destination "$env:outputDirectory" -Force
-            Write-Host "AAB copiado para $env:outputDirectory"
+            
           } else {
               Write-Host "Erro: O arquivo $aabPath não foi encontrado."
           }
@@ -113,8 +109,8 @@ stages:
           $password = $cliente.ToLower()  # Converte o nome do cliente para minúsculas
           Write-Host "Keystore path: $arquivoJks"
           Write-Host "Keystore password: $password"
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$password" "build\app\outputs\bundle\release\app-release.aab" "$cliente"
-          Copy-Item "build\app\outputs\bundle\release\app-release.aab" -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$password" $novoAabPath "$cliente"
+          Copy-Item $novoAabPath -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
         }
       displayName: 'Build dos APKs para todos os clientes'
 
