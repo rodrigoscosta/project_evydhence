@@ -129,7 +129,7 @@ stages:
     - task: sftpupload@1
       inputs:
         sourceFolder: '$(Build.ArtifactStagingDirectory)\apks'
-        contents: '**/*.apk **/*.aab'
+        contents: '**/*.apk'
         targetFolder: '/Clientes/Ancora/Sinqia_Para_Ancora/Temp'
         host: 'sftp.sinqia.com.br'
         port: '22'
