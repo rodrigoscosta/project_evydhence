@@ -69,7 +69,24 @@ stages:
 
           Write-Host "Gerando APK release nao assinado..."
           flutter build apk
-          Copy-Item "build\app\outputs\flutter-apk\app-release.apk" -Destination "$env:outputDirectory\$cliente$apkName-app-release.apk" -Force -ErrorAction SilentlyContinue
+
+          # Caminho do APK gerado
+          $apkPath = "build\app\outputs\flutter-apk\app-release.apk"
+      
+          # Novo nome para o APK
+          $novoApkPath = "$cliente$apkName-app-release.apk"
+
+          # Renomeando o APK
+          if (Test-Path -Path $apkPath) {
+            Rename-Item -Path $apkPath -NewName $novoApkPath -Force
+            Write-Host "APK renomeado para $novoApkPath"
+            
+            # Copiando o APK renomeado para a pasta de saída
+            Copy-Item -Path $novoApkPath -Destination "$env:outputDirectory" -Force
+            Write-Host "APK copiado para $env:outputDirectory"
+          } else {
+            Write-Host "Erro: O arquivo $apkPath não foi encontrado."
+          }
 
           Write-Host "Gerando AAB nao assinado..."
           flutter build appbundle
