@@ -110,7 +110,15 @@ stages:
           Write-Host "Keystore path: $arquivoJks"
           Write-Host "Keystore password: $password"
           jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$arquivoJks" -storepass "$password" $novoAabPath "$cliente"
-          Copy-Item $novoAabPath -Destination "$env:outputDirectory\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
+
+          # Certifica-se de que o diretório de saída exista
+          $destinationDir = "$env:outputDirectory"
+          if (-Not (Test-Path -Path $destinationDir)) {
+            New-Item -Path $destinationDir -ItemType Directory | Out-Null
+          }
+
+          # Copiando o AAB assinado para a pasta de saída
+          Copy-Item $novoAabPath -Destination "$destinationDir\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
         }
       displayName: 'Build dos APKs para todos os clientes'
 
