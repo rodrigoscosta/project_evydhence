@@ -72,20 +72,20 @@ stages:
 
           # Caminho do APK gerado
           $apkPath = "build\app\outputs\flutter-apk\app-release.apk"
-      
-          # Novo nome para o APK
-          $novoApkPath = "$cliente$apkName-app-release.apk"
+
+          # Novo nome para o APK, mas com o caminho completo
+          $novoApkPath = "$(Build.SourcesDirectory)\build\app\outputs\flutter-apk\$cliente$apkName-app-release.apk"
 
           # Renomeando o APK
           if (Test-Path -Path $apkPath) {
             Rename-Item -Path $apkPath -NewName $novoApkPath -Force
             Write-Host "APK renomeado para $novoApkPath"
-            
+    
             # Copiando o APK renomeado para a pasta de saída
             Copy-Item -Path $novoApkPath -Destination "$env:outputDirectory" -Force
             Write-Host "APK copiado para $env:outputDirectory"
           } else {
-            Write-Host "Erro: O arquivo $apkPath não foi encontrado."
+              Write-Host "Erro: O arquivo $apkPath não foi encontrado."
           }
 
           Write-Host "Gerando AAB nao assinado..."
