@@ -5,6 +5,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
+  group: pipeline-app
   buildConfiguration: 'Release'
   outputDirectory: '$(Build.ArtifactStagingDirectory)\apks'
   clientesPath: 'assets\clientes'
@@ -140,5 +141,5 @@ stages:
         targetFolder: '/Clientes/Ancora/Sinqia_Para_Ancora/AppConsorcio-v$(versionApp)'
         host: 'sftp.sinqia.com.br'
         port: '22'
-        username: 'rodrigo.scosta@sinqia.com.br'
-        password: 'AmaterasU!@#12'
+        username: '$(usersftp)'
+        password: '$(passwordsftp)'
