@@ -91,6 +91,24 @@ stages:
           Write-Host "Gerando AAB nao assinado..."
           flutter build appbundle
 
+          # Caminho do AAB gerado
+          $aabPath = "build\app\outputs\bundle\release\app-release.aab"
+
+          # Novo nome para o AAB, mas com o caminho completo
+          $novoAabPath = "$(Build.SourcesDirectory)\build\app\outputs\bundle\release\$cliente$apkName-app-release.aab"
+
+          # Renomeando o AAB
+          if (Test-Path -Path $aabPath) {
+            Rename-Item -Path $aabPath -NewName $novoAabPath -Force
+            Write-Host "AAB renomeado para $novoAabPath"
+    
+            # Copiando o AAB renomeado para a pasta de saída
+            Copy-Item -Path $novoAabPath -Destination "$env:outputDirectory" -Force
+            Write-Host "AAB copiado para $env:outputDirectory"
+          } else {
+              Write-Host "Erro: O arquivo $aabPath não foi encontrado."
+          }
+
           Write-Host "Processo de assinatura do APK..."
           $password = $cliente.ToLower()  # Converte o nome do cliente para minúsculas
           Write-Host "Keystore path: $arquivoJks"
