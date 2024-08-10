@@ -124,22 +124,22 @@ stages:
           # Copiando o AAB assinado e o APK para a pasta apks\
           Copy-Item $novoAabPath -Destination "$destinationDir\$cliente$apkName-Assinado.aab" -Force -ErrorAction SilentlyContinue
           Copy-Item $novoApkPath -Destination "$destinationDir\$cliente$apkName-Assinado.apk" -Force -ErrorAction SilentlyContinue
-
-          - task: PublishBuildArtifacts@1
-            inputs:
-              pathToPublish: '$(outputDirectory)'
-              artifactName: 'drop'
-              publishLocation: 'Container'
-              displayName: 'Publicação dos apks e abbs gerados na pasta apks\'
-          
-          - task: sftpupload@1
-            inputs:
-              sourceFolder: '$(Build.ArtifactStagingDirectory)\apks'
-              contents: '**/*.apk'
-              targetFolder: '/Clientes/Ancora/Sinqia_Para_Ancora/AppConsorcio-v$(versionApp)'
-              host: 'sftp.sinqia.com.br'
-              port: '22'
-              username: '$(usersftp)'
-              password: '$(passwordsftp)'
         }
       displayName: 'Build dos APKs para todos os clientes'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: '$(outputDirectory)'
+        artifactName: 'drop'
+        publishLocation: 'Container'
+      displayName: 'Publicação dos apks e abbs gerados na pasta apks\'
+          
+    - task: sftpupload@1
+      inputs:
+        sourceFolder: '$(Build.ArtifactStagingDirectory)\apks'
+        contents: '**/*.apk'
+        targetFolder: '/Clientes/Ancora/Sinqia_Para_Ancora/AppConsorcio-v$(versionApp)'
+        host: 'sftp.sinqia.com.br'
+        port: '22'
+        username: '$(usersftp)'
+        password: '$(passwordsftp)'
