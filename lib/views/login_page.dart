@@ -5,16 +5,21 @@ import 'package:project_evydhence/routes/app_routes.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final bool isDarkMode;
+  final Function(bool) onThemeChanged;
+
+  const LoginPage({
+    Key? key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  }) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  //final AuthService _authService = GetIt.I<AuthService>();
   final _formKey = GlobalKey<FormState>();
-
   final _usuarioController = TextEditingController();
   final _senhaController = TextEditingController();
   bool _isLoading = false;
@@ -37,6 +42,10 @@ class _LoginPageState extends State<LoginPage> {
     _usuarioController.dispose();
     _senhaController.dispose();
     super.dispose();
+  }
+
+  void _toggleTheme(bool isDarkMode) {
+    widget.onThemeChanged(isDarkMode);
   }
 
   _handleLogin(String usuario, String senha) async {
@@ -68,19 +77,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  /// Função utilizada como listener de um [TextEditingController].
-  ///
-  /// Define o state [_enableSubmitButton] como o retorno da função
-  /// [_shouldEnableSubmitButton].
   void _enableSubmitButtonListener() {
     setState(() {
       _enableSubmitButton = _shouldEnableSubmitButton();
     });
   }
 
-  /// Valida se todos [TextEditingController.text] não estão vazios e se
-  /// [_usuarioController.text] e [_senhaController.text]
-  /// são iguais.
   bool _shouldEnableSubmitButton() {
     final usuario = _usuarioController.text;
     final senha = _senhaController.text;
@@ -130,13 +132,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
   Future<bool> _onWillPop() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginPage(),
-      ),
-    );
-    return false;
+    return true;
   }
 
   @override
@@ -146,25 +142,46 @@ class _LoginPageState extends State<LoginPage> {
       child: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
-
           if (!currentFocus.hasPrimaryFocus) {
             currentFocus.unfocus();
           }
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: widget.isDarkMode ? Colors.black : Colors.white,
           appBar: AppBar(
             centerTitle: false,
             title: Container(
               height: 150.0,
               width: 150.0,
               decoration: const BoxDecoration(
+                color: Colors.white,
                 image:
                     DecorationImage(image: ExactAssetImage('images/icon.png')),
               ),
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
             elevation: 0,
+            actions: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    widget.isDarkMode ? Icons.brightness_2 : Icons.brightness_5,
+                    color: widget.isDarkMode ? Colors.white : Colors.black,
+                  ),
+                  Switch(
+                    value: widget.isDarkMode,
+                    onChanged: (value) {
+                      _toggleTheme(value);
+                    },
+                    activeColor: Colors.blue,
+                    inactiveTrackColor: Colors.grey,
+                    inactiveThumbColor: Colors.white,
+                    activeTrackColor: Colors.blueAccent,
+                  ),
+                ],
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             child: Container(
@@ -177,11 +194,14 @@ class _LoginPageState extends State<LoginPage> {
                     visible: true,
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 14.0),
-                      child: const Text(
+                      child: Text(
                         'Bem-vindo!',
                         style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.w500,
+                          color: widget.isDarkMode
+                              ? Colors.white70
+                              : Colors.black54,
                         ),
                       ),
                     ),
@@ -193,78 +213,127 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 20.0),
-                            child: Wrap(
-                              runSpacing: 26.0,
-                              children: [
-                                if (_errorMessage.isNotEmpty)
-                                  _buildErrorAlert(),
-                                TextInputFormField(
-                                  //enabled: !_isLoading,
-                                  controller: _usuarioController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Usuário inválido';
-                                    }
-                                    return null;
-                                  },
-                                  textInputAction: TextInputAction.next,
-                                  keyboardType: TextInputType.text,
-                                  decoration: const InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    hintText: 'Usuário',
-                                  ),
+                          if (_errorMessage.isNotEmpty) _buildErrorAlert(),
+                          SizedBox(
+                            height: 60.0,
+                            child: TextInputFormField(
+                              controller: _usuarioController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Usuário inválido';
+                                }
+                                return null;
+                              },
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: widget.isDarkMode
+                                    ? Colors.grey[800]
+                                    : Colors.white,
+                                hintText: 'Usuário',
+                                hintStyle: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white70
+                                      : Colors.black54,
                                 ),
-                                TextInputFormField(
-                                  //enabled: !_isLoading,
-                                  controller: _senhaController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Senha inválida';
-                                    }
-                                    return null;
-                                  },
-                                  textInputAction: TextInputAction.next,
-                                  onEditingComplete: () {
-                                    _onLoginButtonPressed();
-                                  },
-                                  obscureText: _isHidden,
-                                  decoration: InputDecoration(
-                                      hintText: 'Senha',
-                                      suffixIcon: GestureDetector(
-                                        behavior: HitTestBehavior.opaque,
-                                        onTap: () {
-                                          setState(() {
-                                            _isHidden = !_isHidden;
-                                          });
-                                        },
-                                        child: Icon(
-                                          _isHidden
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          semanticLabel: _isHidden
-                                              ? 'Mostrar senha'
-                                              : 'Ocultar Senha',
-                                        ),
-                                      )),
+                                border: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
                                 ),
-                              ],
+                                enabledBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                              ),
+                              style: TextStyle(
+                                color: widget.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
                             ),
                           ),
+                          SizedBox(
+                            height: 60.0,
+                            child: TextInputFormField(
+                              controller: _senhaController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Senha inválida';
+                                }
+                                return null;
+                              },
+                              textInputAction: TextInputAction.done,
+                              obscureText: _isHidden,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: widget.isDarkMode
+                                    ? Colors.grey[800]
+                                    : Colors.white,
+                                hintText: 'Senha',
+                                hintStyle: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                ),
+                                border: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                enabledBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                suffixIcon: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _isHidden = !_isHidden;
+                                    });
+                                  },
+                                  child: Icon(
+                                    _isHidden
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              style: TextStyle(
+                                color: widget.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+
+                          // Botão
                           Button(
                             flavor: ButtonFlavor.elevated,
                             onPressed: _enableSubmitButton
                                 ? _onLoginButtonPressed
                                 : null,
-                            // onPressed: () {
-                            //   Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => const HomePage()), //Trocar para a page seguinte
-                            //   );
-                            // },
-                            child: const Text('ACESSAR MINHA CONTA'),
+                            child: Text(
+                              'ACESSAR MINHA CONTA',
+                              style: TextStyle(
+                                color: widget.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
                           ),
                         ],
                       ),

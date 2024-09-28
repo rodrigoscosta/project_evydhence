@@ -3,13 +3,16 @@ import 'package:project_evydhence/controllers/client_controller.dart';
 import 'package:project_evydhence/controllers/vehicle_controller.dart';
 
 class InjectionContainer {
+  // Construtor privado
   InjectionContainer._();
 
+  // Instância singleton
   static InjectionContainer get instance => InjectionContainer._();
 
-  /// shorthand to "service locator"
+  // Instância do serviço locator
   static final sl = GetIt.instance;
 
+  // Registra os controladores
   void _registerControllers() {
     sl.registerLazySingleton<ClientController>(
       () => ClientController(),
@@ -19,7 +22,8 @@ class InjectionContainer {
     );
   }
 
+  // Inicializa os serviços e controladores
   Future<void> init() async {
-     _registerControllers();
+    _registerControllers();
   }
 }

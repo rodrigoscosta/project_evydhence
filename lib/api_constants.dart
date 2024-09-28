@@ -1,5 +1,6 @@
 class ApiConstants {
-  static String baseUrl = 'http://127.0.0.1:8000';
+  static String baseUrl =
+      'https://projectevydhencebackend-production.up.railway.app';
 
   static String getClientsEndpoint = '/persons/';
   static String getClientEndpoint = '/persons/<int:pk>/';

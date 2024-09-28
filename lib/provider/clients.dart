@@ -18,45 +18,49 @@ class Clients with ChangeNotifier {
   }
 
   void put(ClientModel client) {
-    //if (client == null) return;
+    if (client == null) return; // Verifica se o cliente é nulo
 
-    //Adiciona ou altera alguém
+    // Adiciona ou altera alguém
     if (_items.containsKey(client.cpfCnpj)) {
       _items.update(
-          client.cpfCnpj,
-          (_) => ClientModel(
-              //indexClient: client.indexClient,
-              idClient: client.idClient,
-              cpfCnpj: client.cpfCnpj,
-              rg: client.rg,
-              nomeRazao: client.nomeRazao,
-              telefone: client.telefone,
-              email: client.email,
-              confirmarEmail: client.confirmarEmail,
-              dataNascFund: client.dataNascFund
-              //listaVeiculos: client.listaVeiculos
-              ));
+        client.cpfCnpj,
+        (_) => ClientModel(
+          idClient: client.idClient,
+          cpfCnpj: client.cpfCnpj,
+          rg: client.rg,
+          nomeRazao: client.nomeRazao,
+          telefone: client.telefone,
+          email: client.email,
+          confirmarEmail: client.confirmarEmail,
+          dataNascFund: client.dataNascFund,
+          // Se houver a lista de veículos, você pode descomentar e adicionar
+          // listaVeiculos: client.listaVeiculos,
+        ),
+      );
     } else {
       _items.putIfAbsent(
-          client.cpfCnpj,
-          () => ClientModel(
-                //indexClient: client.indexClient,
-                idClient: client.idClient,
-                cpfCnpj: client.cpfCnpj,
-                rg: client.rg,
-                nomeRazao: client.nomeRazao,
-                telefone: client.telefone,
-                email: client.email,
-                confirmarEmail: client.confirmarEmail,
-                dataNascFund: client.dataNascFund,
-                //listaVeiculos: client.listaVeiculos
-              ));
+        client.cpfCnpj,
+        () => ClientModel(
+          idClient: client.idClient,
+          cpfCnpj: client.cpfCnpj,
+          rg: client.rg,
+          nomeRazao: client.nomeRazao,
+          telefone: client.telefone,
+          email: client.email,
+          confirmarEmail: client.confirmarEmail,
+          dataNascFund: client.dataNascFund,
+          // listaVeiculos: client.listaVeiculos,
+        ),
+      );
     }
     notifyListeners();
   }
 
   void remove(ClientModel client) {
-    _items.remove(client.cpfCnpj);
-    notifyListeners();
+    if (client != null) {
+      // Verifica se o cliente é nulo
+      _items.remove(client.cpfCnpj);
+      notifyListeners();
+    }
   }
 }
