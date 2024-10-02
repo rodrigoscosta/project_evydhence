@@ -74,8 +74,13 @@ class _MyAppState extends State<MyApp> {
                 isDarkMode: _isDarkMode,
                 onThemeChanged: _toggleTheme,
               ),
-          AppRoutes.clientPage: (_) => const ClientListPage(),
-          AppRoutes.clientForm: (_) => const ClientRegisterForm(),
+          AppRoutes.clientPage: (_) => ClientListPage(
+                isDarkMode: _isDarkMode,
+                onThemeChanged: _toggleTheme,
+              ),
+          AppRoutes.clientForm: (_) => ClientRegisterForm(
+                isDarkMode: _isDarkMode,
+              ),
           AppRoutes.vehiclePage: (_) => const VehicleListPage(),
           AppRoutes.vehicleForm: (_) => const VehicleRegisterForm(),
         },

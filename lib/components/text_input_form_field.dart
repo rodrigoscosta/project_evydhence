@@ -165,7 +165,6 @@ class _TextInputFormFieldState extends State<TextInputFormField> {
       autocorrect: widget.autocorrect,
       style: widget.style,
       strutStyle: widget.strutStyle,
-      //toolbarOptions: widget.toolbarOptions,
       textAlign: widget.textAlign,
       maxLength: widget.maxLength,
       maxLines: widget.maxLines,

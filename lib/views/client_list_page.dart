@@ -12,7 +12,14 @@ import 'package:project_evydhence/services/api_service.dart';
 import 'package:project_evydhence/views/forms/client_register_form.dart';
 
 class ClientListPage extends StatefulWidget {
-  const ClientListPage({super.key});
+  final bool isDarkMode;
+  final Function(bool) onThemeChanged;
+
+  const ClientListPage({
+    Key? key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  }) : super(key: key);
 
   @override
   State<ClientListPage> createState() => _ClientListPageState();
@@ -49,21 +56,37 @@ class _ClientListPageState extends State<ClientListPage> {
     Future.delayed(const Duration(seconds: 1)).then((value) => setState(() {}));
   }
 
+  void _toggleTheme(bool isDarkMode) {
+    widget.onThemeChanged(isDarkMode);
+  }
+
   void showSearchDialog(BuildContext context) {
     TextEditingController controller = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Buscar cliente por CPF'),
+          backgroundColor: widget.isDarkMode ? Colors.grey[800] : Colors.white,
+          title: Text(
+            'Buscar cliente por CPF',
+            style: TextStyle(
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
           content: TextField(
+            style: TextStyle(
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
             controller: controller,
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly
             ],
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Digite o CPF (apenas números)',
+              labelStyle: TextStyle(
+                color: widget.isDarkMode ? Colors.white : Colors.black,
+              ),
             ),
           ),
           actions: <Widget>[
@@ -71,9 +94,15 @@ class _ClientListPageState extends State<ClientListPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancelar'),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: widget.isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
             ),
-            ElevatedButton(
+            Button(
+              flavor: ButtonFlavor.elevated,
               onPressed: () async {
                 String cpfCnpj = controller.text;
                 ClientModel? result = await ApiService().getClient(cpfCnpj);
@@ -82,11 +111,22 @@ class _ClientListPageState extends State<ClientListPage> {
                   showResult(context, result);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Cliente não encontrado')),
+                    SnackBar(
+                        content: Text(
+                      'Cliente não encontrado',
+                      style: TextStyle(
+                        color: widget.isDarkMode ? Colors.white : Colors.black,
+                      ),
+                    )),
                   );
                 }
               },
-              child: const Text('Buscar'),
+              child: Text(
+                'Buscar',
+                style: TextStyle(
+                  color: widget.isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
             ),
           ],
         );
@@ -110,29 +150,41 @@ class _ClientListPageState extends State<ClientListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: widget.isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
         centerTitle: false,
-        title: const Text(
+        title: Text(
           'Clientes',
           style: TextStyle(
             fontSize: 24.0,
             fontWeight: FontWeight.w500,
+            color: widget.isDarkMode ? Colors.white : Colors.black,
           ),
+        ),
+        leading: IconButton(
+          tooltip: 'Voltar',
+          icon: Icon(
+            Icons.arrow_back,
+            color: widget.isDarkMode ? Colors.white : Colors.black,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         actions: <Widget>[
           Container(
             margin: const EdgeInsets.fromLTRB(30.0, 0, 30.0, 0),
             child: IconButton(
+              color: widget.isDarkMode ? Colors.white : Colors.black,
               onPressed: () {
-                Navigator.of(context).pushNamed(
-                  AppRoutes.clientForm,
-                );
+                Navigator.of(context).pushNamed(AppRoutes.clientForm);
               },
               icon: const Icon(Icons.add),
               tooltip: 'Adicionar cliente',
             ),
           ),
           IconButton(
+            color: widget.isDarkMode ? Colors.white : Colors.black,
             icon: const Icon(Icons.search),
             padding: const EdgeInsets.fromLTRB(0, 0, 30.0, 0),
             onPressed: () {
@@ -140,9 +192,28 @@ class _ClientListPageState extends State<ClientListPage> {
             },
             tooltip: 'Buscar cliente',
           ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                widget.isDarkMode ? Icons.brightness_2 : Icons.brightness_5,
+                color: widget.isDarkMode ? Colors.white : Colors.black,
+              ),
+              Switch(
+                value: widget.isDarkMode,
+                onChanged: (value) {
+                  _toggleTheme(value);
+                },
+                activeColor: Colors.blue,
+                inactiveTrackColor: Colors.grey,
+                inactiveThumbColor: Colors.white,
+                activeTrackColor: Colors.blueAccent,
+              ),
+            ],
+          ),
         ],
-        backgroundColor: Colors.white,
         elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       body: ListView.builder(
         itemCount: _clientModel!.length,
@@ -163,6 +234,10 @@ class _ClientListPageState extends State<ClientListPage> {
                         ),
                         Text(
                           'RG: ${_clientModel![index].rg}',
+                          style: TextStyle(
+                            color:
+                                widget.isDarkMode ? Colors.white : Colors.black,
+                          ),
                         ),
                         Text(
                           'Data de Nascimento: ${fromDateTimeToDateUsingPattern(DateTime.parse(_clientModel![index].dataNascFund))}',
@@ -189,7 +264,10 @@ class _ClientListPageState extends State<ClientListPage> {
 
                         cliente.setId(_clientModel![index].idClient);
                       },
-                      icon: const Icon(Icons.directions_car),
+                      icon: Icon(
+                        Icons.directions_car,
+                        color: widget.isDarkMode ? Colors.white : Colors.black,
+                      ),
                       tooltip: 'Veículos',
                     ),
                     IconButton(
@@ -198,11 +276,15 @@ class _ClientListPageState extends State<ClientListPage> {
                           builder: (context) => ClientRegisterForm(
                             client: _clientModel![index],
                             clientId: _clientModel![index].idClient,
+                            isDarkMode: widget.isDarkMode,
                           ),
                         ));
                         cliente.setIndexClient(index);
                       },
-                      icon: const Icon(Icons.edit),
+                      icon: Icon(
+                        Icons.edit,
+                        color: widget.isDarkMode ? Colors.white : Colors.black,
+                      ),
                       tooltip: 'Editar cliente',
                     ),
                     IconButton(
@@ -211,7 +293,10 @@ class _ClientListPageState extends State<ClientListPage> {
                             .deleteClient(_clientModel![index].idClient);
                         _getData();
                       },
-                      icon: const Icon(Icons.delete),
+                      icon: Icon(
+                        Icons.delete,
+                        color: widget.isDarkMode ? Colors.white : Colors.black,
+                      ),
                       tooltip: 'Deletar cliente',
                     ),
                   ],
@@ -231,7 +316,12 @@ class _ClientListPageState extends State<ClientListPage> {
               Button(
                 flavor: ButtonFlavor.elevated,
                 onPressed: _getData,
-                child: const Text('LISTAR TODOS OS CLIENTES'),
+                child: Text(
+                  'LISTAR TODOS OS CLIENTES',
+                  style: TextStyle(
+                    color: widget.isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
               ),
             ],
           ),

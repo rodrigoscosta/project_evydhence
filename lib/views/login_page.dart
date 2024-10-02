@@ -200,8 +200,8 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: 24.0,
                           fontWeight: FontWeight.w500,
                           color: widget.isDarkMode
-                              ? Colors.white70
-                              : Colors.black54,
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
                     ),
@@ -234,8 +234,8 @@ class _LoginPageState extends State<LoginPage> {
                                 hintText: 'Usuário',
                                 hintStyle: TextStyle(
                                   color: widget.isDarkMode
-                                      ? Colors.white70
-                                      : Colors.black54,
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                                 border: const OutlineInputBorder(
                                   borderRadius:
@@ -279,8 +279,8 @@ class _LoginPageState extends State<LoginPage> {
                                 hintText: 'Senha',
                                 hintStyle: TextStyle(
                                   color: widget.isDarkMode
-                                      ? Colors.white70
-                                      : Colors.black54,
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                                 border: const OutlineInputBorder(
                                   borderRadius:

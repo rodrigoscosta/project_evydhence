@@ -11,13 +11,14 @@ import 'package:project_evydhence/components/text_input_form_field.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
 import 'package:project_evydhence/models/client_model.dart';
 import 'package:project_evydhence/services/api_service.dart';
-import 'package:project_evydhence/views/client_list_page.dart';
 
 class ClientRegisterForm extends StatefulWidget {
+  final bool isDarkMode;
   final ClientModel? client;
   final int? clientId;
 
-  const ClientRegisterForm({Key? key, this.client, this.clientId})
+  const ClientRegisterForm(
+      {Key? key, required this.isDarkMode, this.client, this.clientId})
       : super(key: key);
 
   @override
@@ -107,12 +108,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
   }
 
   void _submit() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ClientListPage(),
-      ),
-    );
+    if (!_formKey.currentState!.validate()) return;
 
     if (widget.clientId != null) {
       // Se o ID do cliente estiver definido, chama o método de atualização
@@ -122,8 +118,41 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
       await createClient();
     }
 
-    if (!_formKey.currentState!.validate()) return;
-
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: widget.isDarkMode ? Colors.grey[800] : Colors.white,
+          title: Text(
+            'Sucesso',
+            style: TextStyle(
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          content: Text(
+            'Cliente cadastrado com sucesso!',
+            style: TextStyle(
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          actions: <Widget>[
+            Button(
+              flavor: ButtonFlavor.elevated,
+              child: Text(
+                'Voltar',
+                style: TextStyle(
+                  color: widget.isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
     cliente.clearForm();
   }
 
@@ -160,6 +189,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
         }
       },
       child: Scaffold(
+        backgroundColor: widget.isDarkMode ? Colors.black : Colors.white,
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -178,17 +208,18 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'Adicionar cliente',
                         style: TextStyle(
-                          color: Color(0xff484853),
+                          color:
+                              widget.isDarkMode ? Colors.white : Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
-                        color: const Color(0xff74747E),
+                        color: widget.isDarkMode ? Colors.white : Colors.black,
                         onPressed: _cancel,
                       ),
                     ],
@@ -208,21 +239,63 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                           Container(
                             margin:
                                 const EdgeInsets.only(top: 30.0, bottom: 26.0),
-                            child: const Text('Preencha os campos abaixo'),
+                            child: Text(
+                              'Preencha os campos abaixo',
+                              style: TextStyle(
+                                color: widget.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
                           ),
                           Wrap(
                             runSpacing: 26.0,
                             children: [
                               TextInputFormField(
                                 labelText: 'Nome/Razão Social',
+                                style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _nomeController,
-                                keyboardType: TextInputType.visiblePassword,
+                                keyboardType: TextInputType.text,
                                 onChanged: cliente.setNomeRazao,
                                 maxLength: 60,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'CPF/CNPJ',
+                                style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _cpfCnpjController,
                                 keyboardType: TextInputType.number,
@@ -230,17 +303,77 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                 inputFormatters: [_cpfCnpjMask],
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'RG',
+                                style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _rgController,
                                 keyboardType: TextInputType.visiblePassword,
                                 onChanged: cliente.setRg,
                                 maxLength: 20,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'Data de Nascimento/Fundação',
+                                style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 controller: _dataNascFundController,
                                 required: true,
                                 keyboardType: TextInputType.datetime,
@@ -251,8 +384,36 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                   }
                                 },
                                 decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
                                   suffixIcon: IconButton(
-                                    icon: const Icon(Icons.event_rounded),
+                                    icon: Icon(
+                                      Icons.event_rounded,
+                                      color: widget.isDarkMode
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
                                     onPressed: () async {
                                       final result = await showDatePicker(
                                         context: context,
@@ -280,11 +441,41 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               ),
                               TextInputFormField(
                                 labelText: 'Telefone',
+                                style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _telefoneController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [_phoneMask],
                                 onChanged: cliente.setTelefone,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return null;
@@ -298,6 +489,11 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               ),
                               TextInputFormField(
                                 labelText: 'Email',
+                                style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 maxLength: 60,
                                 controller: _emailController,
@@ -314,9 +510,39 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                 inputFormatters: [LowerCaseTextFormatter()],
                                 textCapitalization: TextCapitalization.none,
                                 enableInteractiveSelection: false,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'Confirmar email',
+                                style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 maxLength: 60,
                                 controller: _confirmarEmailController,
@@ -333,6 +559,31 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                 inputFormatters: [LowerCaseTextFormatter()],
                                 textCapitalization: TextCapitalization.none,
                                 enableInteractiveSelection: false,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                             ],
                           )
@@ -353,14 +604,24 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Button(
-                  flavor: ButtonFlavor.outlined,
+                  flavor: ButtonFlavor.elevated,
                   onPressed: _cancel,
-                  child: const Text('CANCELAR'),
+                  child: Text(
+                    'CANCELAR',
+                    style: TextStyle(
+                      color: widget.isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
                 ),
                 Button(
                   flavor: ButtonFlavor.elevated,
                   onPressed: _submit,
-                  child: const Text('ADICIONAR/EDITAR'),
+                  child: Text(
+                    'ADICIONAR/EDITAR',
+                    style: TextStyle(
+                      color: widget.isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
                 ),
               ],
             ),
