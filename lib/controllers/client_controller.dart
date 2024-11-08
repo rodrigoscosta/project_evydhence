@@ -27,21 +27,6 @@ class ClientController with Store {
   @computed
   int get total => list!.length;
 
-  // @action
-  // void add(ClientModel value) {
-  //   list.add(value);
-  // }
-
-  // @action
-  // void edit(ClientModel cliente, int index) {
-  //   list[index] = cliente;
-  // }
-
-  // @action
-  // void remove(int index) {
-  //   list.removeAt(index);
-  // }
-
   @action
   void clearForm() {
     setCpfCnpj('');

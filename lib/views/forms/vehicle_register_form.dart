@@ -6,14 +6,22 @@ import 'package:project_evydhence/components/text_input_form_field.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
 import 'package:project_evydhence/controllers/vehicle_controller.dart';
 import 'package:project_evydhence/models/vehicle_model.dart';
+import 'package:project_evydhence/provider/zoom_provider.dart';
 import 'package:project_evydhence/services/api_service.dart';
 import 'package:project_evydhence/views/vehicle_list_page.dart';
 
 class VehicleRegisterForm extends StatefulWidget {
+  final bool isDarkMode;
+  final Function(bool) onThemeChanged;
   final VehicleModel? vehicle;
   final int? vehicleId;
 
-  const VehicleRegisterForm({Key? key, this.vehicle, this.vehicleId})
+  const VehicleRegisterForm(
+      {Key? key,
+      required this.isDarkMode,
+      required this.onThemeChanged,
+      this.vehicle,
+      this.vehicleId})
       : super(key: key);
 
   @override
@@ -31,6 +39,7 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
   final _tipoVeiculoController = TextEditingController(text: '');
   final _anoFabricacaoController = TextEditingController(text: '');
   final _anoModeloEmailController = TextEditingController(text: '');
+  final zoomProvider = GetIt.I<ZoomProvider>();
 
   @override
   void didChangeDependencies() {
@@ -83,23 +92,60 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
   }
 
   void _submit() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const VehicleListPage(),
-      ),
-    );
+    if (!_formKey.currentState!.validate()) return;
 
     if (widget.vehicleId != null) {
       // Se o ID do cliente estiver definido, chama o método de atualização
       await updateVehicle();
     } else {
-      // Caso contrário, chama o método de criação de veículo
+      // Caso contrário, chama o método de criação de cliente
       await createVehicle();
     }
 
-    if (!_formKey.currentState!.validate()) return;
-
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: widget.isDarkMode ? Colors.grey[800] : Colors.white,
+          title: Text(
+            'Sucesso',
+            style: TextStyle(
+              fontSize: 16.0 * zoomProvider.scaleFactor,
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          content: Text(
+            'Veículo cadastrado/editado com sucesso!',
+            style: TextStyle(
+              fontSize: 16.0 * zoomProvider.scaleFactor,
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          actions: <Widget>[
+            Button(
+              flavor: ButtonFlavor.elevated,
+              child: Text(
+                'Voltar',
+                style: TextStyle(
+                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                  color: widget.isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VehicleListPage(
+                        isDarkMode: widget.isDarkMode,
+                        onThemeChanged: widget.onThemeChanged),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
     veiculo.clearForm();
   }
 
@@ -126,6 +172,54 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
         veiculo.anoModelo);
   }
 
+  List<Widget> _buildAppBarActions() {
+    return [
+      Row(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Botão de Zoom
+              IconButton(
+                iconSize: 28.0 * zoomProvider.scaleFactor,
+                tooltip: 'Aumentar zoom',
+                icon: Icon(
+                  Icons.zoom_in,
+                  color: widget.isDarkMode ? Colors.white : Colors.black,
+                ),
+                onPressed: () {
+                  setState(() {
+                    zoomProvider.increaseZoom();
+                  });
+                },
+              ),
+              IconButton(
+                iconSize: 28.0 * zoomProvider.scaleFactor,
+                tooltip: 'Diminuir zoom',
+                icon: Icon(
+                  Icons.zoom_out,
+                  color: widget.isDarkMode ? Colors.white : Colors.black,
+                ),
+                onPressed: () {
+                  setState(() {
+                    zoomProvider.decreaseZoom();
+                  });
+                },
+              ),
+              IconButton(
+                iconSize: 28.0 * zoomProvider.scaleFactor,
+                tooltip: 'Cancelar',
+                icon: const Icon(Icons.close),
+                color: widget.isDarkMode ? Colors.white : Colors.black,
+                onPressed: _cancel,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -136,6 +230,32 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
         }
       },
       child: Scaffold(
+        backgroundColor: widget.isDarkMode ? Colors.black : Colors.white,
+        appBar: AppBar(
+          centerTitle: false,
+          title: Text(
+            'Adicionar veículo',
+            style: TextStyle(
+              fontSize: 24.0 * zoomProvider.scaleFactor,
+              fontWeight: FontWeight.w500,
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          leading: IconButton(
+            tooltip: 'Voltar',
+            iconSize: 28.0 * zoomProvider.scaleFactor,
+            icon: Icon(
+              Icons.arrow_back,
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          actions: _buildAppBarActions(),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -143,33 +263,6 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: const Color(0xffE9E9EF),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Adicionar veículo',
-                        style: TextStyle(
-                          color: Color(0xff484853),
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        color: const Color(0xff74747E),
-                        onPressed: _cancel,
-                      ),
-                    ],
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24.0,
@@ -184,57 +277,257 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
                           Container(
                             margin:
                                 const EdgeInsets.only(top: 30.0, bottom: 26.0),
-                            child: const Text('Preencha os campos abaixo'),
+                            child: Text(
+                              'Preencha os campos abaixo',
+                              style: TextStyle(
+                                fontSize: 24.0 * zoomProvider.scaleFactor,
+                                color: widget.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
                           ),
                           Wrap(
                             runSpacing: 26.0,
                             children: [
                               TextInputFormField(
                                 labelText: 'Placa do veículo',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _placaController,
                                 keyboardType: TextInputType.text,
                                 onChanged: veiculo.setPlaca,
                                 maxLength: 20,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'Marca do veículo',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _marcaController,
                                 keyboardType: TextInputType.text,
                                 onChanged: veiculo.setMarca,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'Modelo do veículo',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _modeloController,
                                 keyboardType: TextInputType.text,
                                 onChanged: veiculo.setModelo,
                                 maxLength: 20,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'Tipo do veículo',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _tipoVeiculoController,
                                 keyboardType: TextInputType.text,
                                 onChanged: veiculo.setTipoVeiculo,
                                 maxLength: 20,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'Ano de fabricação',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _anoFabricacaoController,
                                 keyboardType: TextInputType.visiblePassword,
                                 onChanged: veiculo.setAnoFabricacao,
                                 maxLength: 4,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextInputFormField(
                                 labelText: 'Ano do modelo',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 required: true,
                                 controller: _anoModeloEmailController,
                                 keyboardType: TextInputType.visiblePassword,
                                 onChanged: veiculo.setAnoModelo,
                                 maxLength: 4,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
                             ],
                           )
@@ -249,21 +542,33 @@ class _VehicleRegisterFormState extends State<VehicleRegisterForm> {
         ),
         bottomNavigationBar: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(24.0 * zoomProvider.scaleFactor),
             child: Observer(
               builder: (context) => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Button(
-                    flavor: ButtonFlavor.outlined,
+                    flavor: ButtonFlavor.elevated,
                     onPressed: _cancel,
-                    child: const Text('CANCELAR'),
+                    child: Text(
+                      'CANCELAR',
+                      style: TextStyle(
+                        fontSize: 16.0 * zoomProvider.scaleFactor,
+                        color: widget.isDarkMode ? Colors.white : Colors.black,
+                      ),
+                    ),
                   ),
                   Button(
                     flavor: ButtonFlavor.elevated,
                     onPressed: _submit,
-                    child: const Text('ADICIONAR/EDITAR'),
+                    child: Text(
+                      'ADICIONAR/EDITAR',
+                      style: TextStyle(
+                        fontSize: 16.0 * zoomProvider.scaleFactor,
+                        color: widget.isDarkMode ? Colors.white : Colors.black,
+                      ),
+                    ),
                   ),
                 ],
               ),

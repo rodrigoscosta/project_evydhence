@@ -10,6 +10,7 @@ import 'package:project_evydhence/components/text_formatter.dart';
 import 'package:project_evydhence/components/text_input_form_field.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
 import 'package:project_evydhence/models/client_model.dart';
+import 'package:project_evydhence/provider/zoom_provider.dart';
 import 'package:project_evydhence/services/api_service.dart';
 
 class ClientRegisterForm extends StatefulWidget {
@@ -40,6 +41,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   final _cpfCnpjMask = CpfCnpjMask();
   final _phoneMask = PhoneMask();
+  final zoomProvider = GetIt.I<ZoomProvider>();
 
   @override
   void didChangeDependencies() {
@@ -126,12 +128,14 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
           title: Text(
             'Sucesso',
             style: TextStyle(
+              fontSize: 16.0 * zoomProvider.scaleFactor,
               color: widget.isDarkMode ? Colors.white : Colors.black,
             ),
           ),
           content: Text(
-            'Cliente cadastrado com sucesso!',
+            'Cliente cadastrado/editado com sucesso!',
             style: TextStyle(
+              fontSize: 16.0 * zoomProvider.scaleFactor,
               color: widget.isDarkMode ? Colors.white : Colors.black,
             ),
           ),
@@ -141,6 +145,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
               child: Text(
                 'Voltar',
                 style: TextStyle(
+                  fontSize: 16.0 * zoomProvider.scaleFactor,
                   color: widget.isDarkMode ? Colors.white : Colors.black,
                 ),
               ),
@@ -179,6 +184,54 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
         keepOnlyDigits(cliente.telefone));
   }
 
+  List<Widget> _buildAppBarActions() {
+    return [
+      Row(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Botão de Zoom
+              IconButton(
+                iconSize: 28.0 * zoomProvider.scaleFactor,
+                tooltip: 'Aumentar zoom',
+                icon: Icon(
+                  Icons.zoom_in,
+                  color: widget.isDarkMode ? Colors.white : Colors.black,
+                ),
+                onPressed: () {
+                  setState(() {
+                    zoomProvider.increaseZoom();
+                  });
+                },
+              ),
+              IconButton(
+                iconSize: 28.0 * zoomProvider.scaleFactor,
+                tooltip: 'Diminuir zoom',
+                icon: Icon(
+                  Icons.zoom_out,
+                  color: widget.isDarkMode ? Colors.white : Colors.black,
+                ),
+                onPressed: () {
+                  setState(() {
+                    zoomProvider.decreaseZoom();
+                  });
+                },
+              ),
+              IconButton(
+                iconSize: 28.0 * zoomProvider.scaleFactor,
+                tooltip: 'Cancelar',
+                icon: const Icon(Icons.close),
+                color: widget.isDarkMode ? Colors.white : Colors.black,
+                onPressed: _cancel,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -190,6 +243,31 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
       },
       child: Scaffold(
         backgroundColor: widget.isDarkMode ? Colors.black : Colors.white,
+        appBar: AppBar(
+          centerTitle: false,
+          title: Text(
+            'Adicionar cliente',
+            style: TextStyle(
+              fontSize: 24.0 * zoomProvider.scaleFactor,
+              fontWeight: FontWeight.w500,
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          leading: IconButton(
+            tooltip: 'Voltar',
+            iconSize: 28.0 * zoomProvider.scaleFactor,
+            icon: Icon(
+              Icons.arrow_back,
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          actions: _buildAppBarActions(),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -197,34 +275,6 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: const Color(0xffE9E9EF),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Adicionar cliente',
-                        style: TextStyle(
-                          color:
-                              widget.isDarkMode ? Colors.white : Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        color: widget.isDarkMode ? Colors.white : Colors.black,
-                        onPressed: _cancel,
-                      ),
-                    ],
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24.0,
@@ -242,6 +292,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                             child: Text(
                               'Preencha os campos abaixo',
                               style: TextStyle(
+                                fontSize: 24.0 * zoomProvider.scaleFactor,
                                 color: widget.isDarkMode
                                     ? Colors.white
                                     : Colors.black,
@@ -254,6 +305,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               TextInputFormField(
                                 labelText: 'Nome/Razão Social',
                                 style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
@@ -283,6 +335,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
                                     color: widget.isDarkMode
                                         ? Colors.white
                                         : Colors.black,
@@ -292,6 +345,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               TextInputFormField(
                                 labelText: 'CPF/CNPJ',
                                 style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
@@ -323,6 +377,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
                                     color: widget.isDarkMode
                                         ? Colors.white
                                         : Colors.black,
@@ -332,6 +387,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               TextInputFormField(
                                 labelText: 'RG',
                                 style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
@@ -361,6 +417,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
                                     color: widget.isDarkMode
                                         ? Colors.white
                                         : Colors.black,
@@ -370,6 +427,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               TextInputFormField(
                                 labelText: 'Data de Nascimento/Fundação',
                                 style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
@@ -403,11 +461,13 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
                                     color: widget.isDarkMode
                                         ? Colors.white
                                         : Colors.black,
                                   ),
                                   suffixIcon: IconButton(
+                                    iconSize: 20.0 * zoomProvider.scaleFactor,
                                     icon: Icon(
                                       Icons.event_rounded,
                                       color: widget.isDarkMode
@@ -442,6 +502,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               TextInputFormField(
                                 labelText: 'Telefone',
                                 style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
@@ -471,6 +532,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
                                     color: widget.isDarkMode
                                         ? Colors.white
                                         : Colors.black,
@@ -490,6 +552,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               TextInputFormField(
                                 labelText: 'Email',
                                 style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
@@ -530,6 +593,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
                                     color: widget.isDarkMode
                                         ? Colors.white
                                         : Colors.black,
@@ -539,6 +603,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                               TextInputFormField(
                                 labelText: 'Confirmar email',
                                 style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
@@ -579,6 +644,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
                                     color: widget.isDarkMode
                                         ? Colors.white
                                         : Colors.black,
@@ -609,6 +675,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                   child: Text(
                     'CANCELAR',
                     style: TextStyle(
+                      fontSize: 16.0 * zoomProvider.scaleFactor,
                       color: widget.isDarkMode ? Colors.white : Colors.black,
                     ),
                   ),
@@ -619,6 +686,7 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                   child: Text(
                     'ADICIONAR/EDITAR',
                     style: TextStyle(
+                      fontSize: 16.0 * zoomProvider.scaleFactor,
                       color: widget.isDarkMode ? Colors.white : Colors.black,
                     ),
                   ),

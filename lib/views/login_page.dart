@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project_evydhence/components/button.dart';
 import 'package:project_evydhence/components/text_input_form_field.dart';
+import 'package:project_evydhence/provider/zoom_provider.dart';
 import 'package:project_evydhence/routes/app_routes.dart';
+import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 class LoginPage extends StatefulWidget {
@@ -137,6 +139,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final zoomProvider = Provider.of<ZoomProvider>(context);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: GestureDetector(
@@ -168,6 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                   Icon(
                     widget.isDarkMode ? Icons.brightness_2 : Icons.brightness_5,
                     color: widget.isDarkMode ? Colors.white : Colors.black,
+                    size: 28.0 * zoomProvider.scaleFactor,
                   ),
                   Switch(
                     value: widget.isDarkMode,
@@ -178,6 +182,33 @@ class _LoginPageState extends State<LoginPage> {
                     inactiveTrackColor: Colors.grey,
                     inactiveThumbColor: Colors.white,
                     activeTrackColor: Colors.blueAccent,
+                  ),
+                  // Botão de Zoom
+                  IconButton(
+                    iconSize: 28.0 * zoomProvider.scaleFactor,
+                    tooltip: 'Aumentar zoom',
+                    icon: Icon(
+                      Icons.zoom_in,
+                      color: widget.isDarkMode ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        zoomProvider.increaseZoom();
+                      });
+                    },
+                  ),
+                  IconButton(
+                    iconSize: 28.0 * zoomProvider.scaleFactor,
+                    tooltip: 'Diminuir zoom',
+                    icon: Icon(
+                      Icons.zoom_out,
+                      color: widget.isDarkMode ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        zoomProvider.decreaseZoom();
+                      });
+                    },
                   ),
                 ],
               ),
@@ -197,11 +228,10 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text(
                         'Bem-vindo!',
                         style: TextStyle(
-                          fontSize: 24.0,
+                          fontSize: 24.0 * zoomProvider.scaleFactor,
                           fontWeight: FontWeight.w500,
-                          color: widget.isDarkMode
-                              ? Colors.white
-                              : Colors.black,
+                          color:
+                              widget.isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                     ),
@@ -215,7 +245,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           if (_errorMessage.isNotEmpty) _buildErrorAlert(),
                           SizedBox(
-                            height: 60.0,
+                            height: 60.0 * zoomProvider.scaleFactor,
                             child: TextInputFormField(
                               controller: _usuarioController,
                               validator: (value) {
@@ -236,6 +266,7 @@ class _LoginPageState extends State<LoginPage> {
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                 ),
                                 border: const OutlineInputBorder(
                                   borderRadius:
@@ -256,11 +287,12 @@ class _LoginPageState extends State<LoginPage> {
                                 color: widget.isDarkMode
                                     ? Colors.white
                                     : Colors.black,
+                                fontSize: 16.0 * zoomProvider.scaleFactor,
                               ),
                             ),
                           ),
                           SizedBox(
-                            height: 60.0,
+                            height: 60.0 * zoomProvider.scaleFactor,
                             child: TextInputFormField(
                               controller: _senhaController,
                               validator: (value) {
@@ -281,6 +313,7 @@ class _LoginPageState extends State<LoginPage> {
                                   color: widget.isDarkMode
                                       ? Colors.white
                                       : Colors.black,
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
                                 ),
                                 border: const OutlineInputBorder(
                                   borderRadius:
@@ -316,11 +349,10 @@ class _LoginPageState extends State<LoginPage> {
                                 color: widget.isDarkMode
                                     ? Colors.white
                                     : Colors.black,
+                                fontSize: 16.0 * zoomProvider.scaleFactor,
                               ),
                             ),
                           ),
-
-                          // Botão
                           Button(
                             flavor: ButtonFlavor.elevated,
                             onPressed: _enableSubmitButton
@@ -332,6 +364,7 @@ class _LoginPageState extends State<LoginPage> {
                                 color: widget.isDarkMode
                                     ? Colors.white
                                     : Colors.black,
+                                fontSize: 16.0 * zoomProvider.scaleFactor,
                               ),
                             ),
                           ),

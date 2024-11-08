@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:project_evydhence/api_constants.dart';
 import 'package:project_evydhence/models/client_model.dart';
+import 'package:project_evydhence/models/schedule_model.dart';
 import 'package:project_evydhence/models/vehicle_model.dart';
 
 class ApiService {
@@ -190,6 +191,97 @@ class ApiService {
 
   Future<bool> deleteVehicle(int idVeiculo) async {
     var url = Uri.parse('${ApiConstants.baseUrl}/vehicles/$idVeiculo/delete/');
+    var response = await http.delete(url);
+    if (response.statusCode == HttpStatus.ok) {
+      return true; // Retornar o true se o veiculo foi deletado
+    } else {
+      return false; // Retorna false se não foi excluido
+    }
+  }
+
+  Future<List<ScheduleModel>?> getSchedules() async {
+    var url =
+        Uri.parse(ApiConstants.baseUrl + ApiConstants.getSchedulesEndpoint);
+    var response = await http.get(url);
+
+    if (response.statusCode == HttpStatus.ok) {
+      return scheduleModelFromJson(
+          response.body); // Retornar o modelo se a resposta for OK
+    } else {
+      return []; // Retornar uma lista vazia se o status da resposta não for OK
+    }
+  }
+
+  Future<List<ScheduleModel>?> getSchedulesByVehicle(int idVeiculo) async {
+    var url = Uri.parse('${ApiConstants.baseUrl}/schedules/$idVeiculo/');
+    var response = await http.get(url);
+
+    if (response.statusCode == HttpStatus.ok) {
+      return scheduleModelFromJson(
+          response.body); // Retornar o modelo se a resposta for OK
+    } else {
+      return []; // Retornar uma lista vazia se o status da resposta não for OK
+    }
+  }
+
+  Future<bool> postSchedule(
+      int idVeiculo,
+      String dtaAgendamento,
+      String horaAgendamento,
+      String localAgendamento,
+      String observacao) async {
+    var url =
+        Uri.parse(ApiConstants.baseUrl + ApiConstants.postSchedulesEndpoint);
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'idVeiculo': idVeiculo,
+        'dtaAgendamento': dtaAgendamento,
+        'horaAgendamento': horaAgendamento,
+        'localAgendamento': localAgendamento,
+        'observacao': observacao
+      }),
+    );
+    if (response.statusCode == HttpStatus.ok) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> putSchedule(
+      int idSchedule,
+      int idVeiculo,
+      String dtaAgendamento,
+      String horaAgendamento,
+      String localAgendamento,
+      String observacao) async {
+    var url =
+        Uri.parse('${ApiConstants.baseUrl}/schedules/$idSchedule/update/');
+    final response = await http.put(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'idVeiculo': idVeiculo,
+        'dtaAgendamento': dtaAgendamento,
+        'horaAgendamento': horaAgendamento,
+        'localAgendamento': localAgendamento,
+        'observacao': observacao,
+      }),
+    );
+    if (response.statusCode == HttpStatus.ok) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> deleteSchedule(int idSchedule) async {
+    var url =
+        Uri.parse('${ApiConstants.baseUrl}/schedules/$idSchedule/delete/');
     var response = await http.delete(url);
     if (response.statusCode == HttpStatus.ok) {
       return true; // Retornar o true se o veiculo foi deletado

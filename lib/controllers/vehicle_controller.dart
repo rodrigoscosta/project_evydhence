@@ -14,16 +14,6 @@ class VehicleController with Store {
   void setClienteAtual(ClientModel value) =>
       clienteAtual = value;
 
-  // @action
-  // void edit(VehicleModel representanteLegal, int index) {
-  //   clienteAtual!.listaVeiculos[index] = representanteLegal;
-  // }
-
-  // @action
-  // void remove(int index) {
-  //   clienteAtual!.listaVeiculos.removeAt(index);
-  // }
-
   @action
   void clearForm() {
     setPlaca('');
