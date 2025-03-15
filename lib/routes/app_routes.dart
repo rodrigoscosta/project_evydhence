@@ -1,5 +1,7 @@
 class AppRoutes {
   static const home = '/';
+  static const homePage = '/home-page';
+  static const dashboardPage = '/dashboard-page';
   static const clientPage = '/client-page';
   static const clientForm = '/client-form';
   static const vehiclePage = '/vehicle-page';

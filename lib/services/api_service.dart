@@ -13,10 +13,12 @@ class ApiService {
     var response = await http.get(url);
 
     if (response.statusCode == HttpStatus.ok) {
+      final decodedData =
+          utf8.decode(response.bodyBytes); // Corrige caracteres especiais
       return userModelFromJson(
-          response.body); // Retornar o modelo se a resposta for OK
+          decodedData); // Decodifica a resposta corretamente
     } else {
-      return []; // Retornar uma lista vazia se o status da resposta não for OK
+      return []; // Retornar uma lista vazia se a resposta não for OK
     }
   }
 
@@ -25,9 +27,22 @@ class ApiService {
     var response = await http.get(url);
 
     if (response.statusCode == HttpStatus.ok) {
-      return ClientModel.fromJson(jsonDecode(response.body));
+      final decodedData = utf8.decode(response.bodyBytes);
+      return ClientModel.fromJson(jsonDecode(decodedData));
     } else {
       return null; // Retornar uma lista vazia se o status da resposta não for OK
+    }
+  }
+
+  Future<ClientModel?> getClientById(int clientId) async {
+    var url = Uri.parse('${ApiConstants.baseUrl}/persons/id/$clientId');
+    var response = await http.get(url);
+
+    if (response.statusCode == HttpStatus.ok) {
+      final decodedData = utf8.decode(response.bodyBytes);
+      return ClientModel.fromJson(jsonDecode(decodedData));
+    } else {
+      return null;
     }
   }
 
@@ -38,7 +53,15 @@ class ApiService {
       String dataNascFund,
       String email,
       String confirmarEmail,
-      String telefone) async {
+      String telefone,
+      String cep,
+      String logradouro,
+      String numeroResidencia,
+      String complemento,
+      String bairro,
+      String cidade,
+      String estado,
+      String uf) async {
     var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.postClientEndpoint);
     final response = await http.post(
       url,
@@ -52,7 +75,15 @@ class ApiService {
         'dataNascFund': dataNascFund,
         'email': email,
         'confirmarEmail': confirmarEmail,
-        'telefone': telefone
+        'telefone': telefone,
+        'cep': cep,
+        'logradouro': logradouro,
+        'numeroResidencia': numeroResidencia,
+        'complemento': complemento,
+        'bairro': bairro,
+        'cidade': cidade,
+        'estado': estado,
+        'uf': uf
       }),
     );
     if (response.statusCode == HttpStatus.ok) {
@@ -69,7 +100,15 @@ class ApiService {
       String dataNascFund,
       String email,
       String confirmarEmail,
-      String telefone) async {
+      String telefone,
+      String cep,
+      String logradouro,
+      String numeroResidencia,
+      String complemento,
+      String bairro,
+      String cidade,
+      String estado,
+      String uf) async {
     var url = Uri.parse('${ApiConstants.baseUrl}/persons/$idClient/update/');
     final response = await http.put(
       url,
@@ -83,7 +122,15 @@ class ApiService {
         'dataNascFund': dataNascFund,
         'email': email,
         'confirmarEmail': confirmarEmail,
-        'telefone': telefone
+        'telefone': telefone,
+        'cep': cep,
+        'logradouro': logradouro,
+        'numeroResidencia': numeroResidencia,
+        'complemento': complemento,
+        'bairro': bairro,
+        'cidade': cidade,
+        'estado': estado,
+        'uf': uf
       }),
     );
     if (response.statusCode == HttpStatus.ok) {

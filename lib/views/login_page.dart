@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _successfulLoginRedirect() => Navigator.of(context).pushNamed(
-        AppRoutes.clientPage,
+        AppRoutes.homePage,
       );
 
   _buildErrorAlert() => SizedBox(

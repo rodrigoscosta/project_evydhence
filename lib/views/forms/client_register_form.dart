@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 import 'package:project_evydhence/components/button.dart';
+import 'package:project_evydhence/components/cep_mask.dart';
 import 'package:project_evydhence/components/cpf_cnpj_mask.dart';
 import 'package:project_evydhence/components/date_mask.dart';
 import 'package:project_evydhence/components/date_parser.dart';
@@ -41,14 +45,23 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   final _cpfCnpjMask = CpfCnpjMask();
   final _phoneMask = PhoneMask();
+  final _cepMask = CepMask();
+  final _cepController = TextEditingController(text: '');
+  final _logradouroController = TextEditingController(text: '');
+  final _numeroResidenciaController = TextEditingController(text: '');
+  final _complementoController = TextEditingController(text: '');
+  final _bairroController = TextEditingController(text: '');
+  final _cidadeController = TextEditingController(text: '');
+  final _estadoController = TextEditingController(text: '');
+  final _ufController = TextEditingController(text: '');
   final zoomProvider = GetIt.I<ZoomProvider>();
 
   @override
   void didChangeDependencies() {
-    if (_isInitializing) {
+    super.didChangeDependencies();
+    if (_isInitializing || widget.clientId != null) {
       _initialization();
     }
-    super.didChangeDependencies();
   }
 
   @override
@@ -60,14 +73,37 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
     _emailController.dispose();
     _confirmarEmailController.dispose();
     _dataNascFundController.dispose();
+    _cepController.dispose();
+    _logradouroController.dispose();
+    _numeroResidenciaController.dispose();
+    _complementoController.dispose();
+    _bairroController.dispose();
+    _cidadeController.dispose();
+    _estadoController.dispose();
+    _ufController.dispose();
     super.dispose();
   }
 
-  void _initialization() {
+  ClientModel? _currentClient;
+
+  void _initialization() async {
     _isInitializing = false;
 
-    if (widget.client != null) {
-      final client = widget.client!;
+    if (widget.client != null && widget.clientId != null) {
+      ApiService apiService = ApiService(); // Create an instance of ApiService
+      ClientModel? updatedClient = await apiService.getClientById(
+          widget.clientId!);
+      if (updatedClient != null) {
+        setState(() {
+          _currentClient = updatedClient;
+        });
+      }
+    } else {
+      _currentClient = widget.client;
+    }
+
+    if (_currentClient != null) {
+      final client = _currentClient!;
 
       _nomeController.text = client.nomeRazao;
       cliente.setNomeRazao(client.nomeRazao);
@@ -91,8 +127,87 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
           fromDateTimeToDateUsingPattern(DateTime.parse(client.dataNascFund));
       _dataNascFundController.text = formattedDate;
       cliente.setDataNascFund(formattedDate);
+
+      _cepController.text = _cepMask.format(client.cep);
+      cliente.setCep(client.cep);
+
+      _logradouroController.text = client.logradouro;
+      cliente.setLogradouro(client.logradouro);
+
+      _numeroResidenciaController.text = client.numeroResidencia;
+      cliente.setNumeroResidencia(client.numeroResidencia);
+
+      _complementoController.text = client.complemento;
+      cliente.setComplemento(client.complemento);
+
+      _cidadeController.text = client.cidade;
+      cliente.setCidade(client.cidade);
+
+      _bairroController.text = client.bairro;
+      cliente.setBairro(client.bairro);
+
+      _estadoController.text = client.estado;
+      cliente.setEstado(client.estado);
+
+      _ufController.text = client.uf;
+      cliente.setUf(client.uf);
     }
   }
+
+  // void _initialization() {
+  //   _isInitializing = false;
+
+  //   if (widget.client != null) {
+  //     final client = widget.client!;
+
+  //     _nomeController.text = client.nomeRazao;
+  //     cliente.setNomeRazao(client.nomeRazao);
+
+  //     _cpfCnpjController.text = _cpfCnpjMask.format(client.cpfCnpj);
+  //     cliente.setCpfCnpj(client.cpfCnpj);
+
+  //     _rgController.text = client.rg;
+  //     cliente.setRg(client.rg);
+
+  //     _telefoneController.text = _phoneMask.format(client.telefone);
+  //     cliente.setTelefone(client.telefone);
+
+  //     _emailController.text = client.email;
+  //     cliente.setEmail(client.email);
+
+  //     _confirmarEmailController.text = client.confirmarEmail;
+  //     cliente.setConfirmarEmail(client.confirmarEmail);
+
+  //     final formattedDate =
+  //         fromDateTimeToDateUsingPattern(DateTime.parse(client.dataNascFund));
+  //     _dataNascFundController.text = formattedDate;
+  //     cliente.setDataNascFund(formattedDate);
+
+  //     _cepController.text = _cepMask.format(client.cep);
+  //     cliente.setCep(client.cep);
+
+  //     _logradouroController.text = client.logradouro;
+  //     cliente.setLogradouro(client.logradouro);
+
+  //     _numeroResidenciaController.text = client.numeroResidencia;
+  //     cliente.setNumeroResidencia(client.numeroResidencia);
+
+  //     _complementoController.text = client.complemento;
+  //     cliente.setComplemento(client.complemento);
+
+  //     _cidadeController.text = client.cidade;
+  //     cliente.setCidade(client.cidade);
+
+  //     _bairroController.text = client.bairro;
+  //     cliente.setBairro(client.bairro);
+
+  //     _estadoController.text = client.estado;
+  //     cliente.setEstado(client.estado);
+
+  //     _ufController.text = client.uf;
+  //     cliente.setUf(client.uf);
+  //   }
+  // }
 
   void _handleDataDeFundacaoChanged(
     String value, {
@@ -102,6 +217,50 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
     if (changeControllerText) {
       _dataNascFundController.text = cliente.dataNascFund.split(' ').first;
     }
+  }
+
+  Future<void> _buscarCep(String cep) async {
+    if (cep.length == 8) {
+      final url = Uri.parse('https://viacep.com.br/ws/$cep/json/');
+      try {
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          final decodedData = utf8.decode(response.bodyBytes);
+          final data = json.decode(decodedData);
+
+          if (data.containsKey('erro')) {
+            _mostrarErro('CEP não encontrado.');
+          } else {
+            setState(() {
+              _logradouroController.text = data['logradouro'] ?? '';
+              _bairroController.text = data['bairro'] ?? '';
+              _cidadeController.text = data['localidade'] ?? '';
+              _estadoController.text = data['estado'] ?? '';
+              _ufController.text = data['uf'] ?? '';
+
+              cliente.setLogradouro(data['logradouro'] ?? '');
+              cliente.setBairro(data['bairro'] ?? '');
+              cliente.setCidade(data['localidade'] ?? '');
+              cliente.setEstado(data['estado'] ?? '');
+              cliente.setUf(data['uf'] ?? '');
+            });
+          }
+        } else {
+          _mostrarErro('Erro ao buscar o CEP.');
+        }
+      } catch (e) {
+        _mostrarErro('Erro ao conectar com o servidor.');
+      }
+    }
+  }
+
+  void _mostrarErro(String mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(mensagem, style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.red),
+    );
   }
 
   void _cancel() {
@@ -169,7 +328,15 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
         cliente.dataNascFund,
         cliente.email,
         cliente.confirmarEmail,
-        keepOnlyDigits(cliente.telefone));
+        keepOnlyDigits(cliente.telefone),
+        keepOnlyDigits(cliente.cep),
+        cliente.logradouro,
+        cliente.numeroResidencia,
+        cliente.complemento ?? " ",
+        cliente.bairro,
+        cliente.cidade,
+        cliente.estado,
+        cliente.uf);
   }
 
   Future<void> updateClient() async {
@@ -181,7 +348,15 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
         cliente.dataNascFund,
         cliente.email,
         cliente.confirmarEmail,
-        keepOnlyDigits(cliente.telefone));
+        keepOnlyDigits(cliente.telefone),
+        keepOnlyDigits(cliente.cep),
+        cliente.logradouro,
+        cliente.numeroResidencia,
+        cliente.complemento ?? " ",
+        cliente.bairro,
+        cliente.cidade,
+        cliente.estado,
+        cliente.uf);
   }
 
   List<Widget> _buildAppBarActions() {
@@ -624,6 +799,341 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                 inputFormatters: [LowerCaseTextFormatter()],
                                 textCapitalization: TextCapitalization.none,
                                 enableInteractiveSelection: false,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextInputFormField(
+                                labelText: 'CEP',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                required: true,
+                                controller: _cepController,
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  _buscarCep(
+                                      value.replaceAll(RegExp(r'[^0-9]'), ''));
+
+                                  cliente.setCep(
+                                      value.replaceAll(RegExp(r'[^0-9]'), ''));
+                                },
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                inputFormatters: [_cepMask],
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextInputFormField(
+                                labelText: 'Logradouro',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                required: true,
+                                controller: _logradouroController,
+                                keyboardType: TextInputType.streetAddress,
+                                onChanged: cliente.setLogradouro,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextInputFormField(
+                                labelText: 'Número',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                required: true,
+                                controller: _numeroResidenciaController,
+                                keyboardType: TextInputType.streetAddress,
+                                onChanged: cliente.setNumeroResidencia,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextInputFormField(
+                                labelText: 'Complemento',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                required: false,
+                                controller: _complementoController,
+                                keyboardType: TextInputType.text,
+                                onChanged: cliente.setComplemento,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextInputFormField(
+                                labelText: 'Bairro',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                required: true,
+                                controller: _bairroController,
+                                keyboardType: TextInputType.text,
+                                onChanged: cliente.setBairro,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextInputFormField(
+                                labelText: 'Cidade',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                required: true,
+                                controller: _cidadeController,
+                                keyboardType: TextInputType.text,
+                                onChanged: cliente.setCidade,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextInputFormField(
+                                labelText: 'Estado',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                required: true,
+                                controller: _estadoController,
+                                keyboardType: TextInputType.streetAddress,
+                                onChanged: cliente.setEstado,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0 * zoomProvider.scaleFactor,
+                                    color: widget.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextInputFormField(
+                                labelText: 'UF',
+                                style: TextStyle(
+                                  fontSize: 16.0 * zoomProvider.scaleFactor,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                required: true,
+                                controller: _ufController,
+                                keyboardType: TextInputType.streetAddress,
+                                onChanged: cliente.setUf,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: widget.isDarkMode

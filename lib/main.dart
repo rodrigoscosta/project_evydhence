@@ -6,9 +6,11 @@ import 'package:project_evydhence/provider/clients.dart';
 import 'package:project_evydhence/provider/zoom_provider.dart';
 import 'package:project_evydhence/routes/app_routes.dart';
 import 'package:project_evydhence/views/client_list_page.dart';
+import 'package:project_evydhence/views/dashboard_page.dart';
 import 'package:project_evydhence/views/forms/client_register_form.dart';
 import 'package:project_evydhence/views/forms/scheduling_register_form.dart';
 import 'package:project_evydhence/views/forms/vehicle_register_form.dart';
+import 'package:project_evydhence/views/home_page.dart';
 import 'package:project_evydhence/views/login_page.dart';
 import 'package:project_evydhence/views/scheduling_list_page.dart';
 import 'package:project_evydhence/views/vehicle_list_page.dart';
@@ -77,6 +79,14 @@ class _MyAppState extends State<MyApp> {
         ),
         routes: {
           AppRoutes.home: (_) => LoginPage(
+                isDarkMode: _isDarkMode,
+                onThemeChanged: _toggleTheme,
+              ),
+          AppRoutes.homePage: (_) => HomePage(
+                isDarkMode: _isDarkMode,
+                onThemeChanged: _toggleTheme,
+              ),
+          AppRoutes.dashboardPage: (_) => DashboardPage(
                 isDarkMode: _isDarkMode,
                 onThemeChanged: _toggleTheme,
               ),

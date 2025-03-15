@@ -57,7 +57,15 @@ class ClientController with Store {
         telefone: telefone,
         email: email,
         confirmarEmail: confirmarEmail,
-        dataNascFund: dataNascFund);
+        dataNascFund: dataNascFund,
+        cep: cep,
+        logradouro: logradouro,
+        numeroResidencia: numeroResidencia,
+        complemento: complemento,
+        bairro: bairro,
+        cidade: cidade,
+        estado: estado,
+        uf: uf);
   }
 
   @observable
@@ -121,6 +129,54 @@ class ClientController with Store {
   DateTime? get dataFundacaoAsDateTime => dataNascFund.isEmpty
       ? null
       : fromDateUsingPatternToDateTime(dataNascFund);
+
+  @observable
+  String cep = '';
+
+  @action
+  void setCep(String value) => cep = value;
+
+  @observable
+  String logradouro = '';
+
+  @action
+  void setLogradouro(String value) => logradouro = value;
+
+  @observable
+  String numeroResidencia = '';
+
+  @action
+  void setNumeroResidencia(String value) => numeroResidencia = value;
+
+  @observable
+  String complemento = '';
+
+  @action
+  void setComplemento(String value) => complemento = value;
+
+  @observable
+  String bairro = '';
+
+  @action
+  void setBairro(String value) => bairro = value;
+
+  @observable
+  String cidade = '';
+
+  @action
+  void setCidade(String value) => cidade = value;
+
+  @observable
+  String uf = '';
+
+  @action
+  void setUf(String value) => uf = value;
+
+  @observable
+  String estado = '';
+
+  @action
+  void setEstado(String value) => estado = value;
 
   @action
   Future<void> loadClients() async {

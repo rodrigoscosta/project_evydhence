@@ -366,7 +366,7 @@ class _ClientListPageState extends State<ClientListPage> {
           ),
           IconButton(
             iconSize: 28.0 * zoomProvider.scaleFactor,
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => ClientRegisterForm(
                   client: _clientModel![index],

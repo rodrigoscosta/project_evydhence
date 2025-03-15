@@ -6,9 +6,8 @@ List<ClientModel> userModelFromJson(String str) => List<ClientModel>.from(
 String userModelToJson(List<ClientModel> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-ClientModel clientModelFromJson(String str) => ClientModel.fromJson(
-    json.decode(str).map((x) => ClientModel.fromJson(x)));
-
+ClientModel clientModelFromJson(String str) =>
+    ClientModel.fromJson(json.decode(str).map((x) => ClientModel.fromJson(x)));
 
 class ClientModel {
   ClientModel({
@@ -20,6 +19,14 @@ class ClientModel {
     required this.email,
     required this.confirmarEmail,
     required this.telefone,
+    required this.cep,
+    required this.logradouro,
+    required this.numeroResidencia,
+    required this.complemento,
+    required this.bairro,
+    required this.cidade,
+    required this.estado,
+    required this.uf,
   });
 
   int idClient;
@@ -30,6 +37,14 @@ class ClientModel {
   String email;
   String confirmarEmail;
   String telefone;
+  String cep;
+  String logradouro;
+  String numeroResidencia;
+  String complemento;
+  String bairro;
+  String cidade;
+  String estado;
+  String uf;
 
   factory ClientModel.fromJson(Map<String, dynamic> json) => ClientModel(
       idClient: json["idClient"],
@@ -39,8 +54,15 @@ class ClientModel {
       dataNascFund: json["dataNascFund"],
       email: json["email"],
       confirmarEmail: json["confirmarEmail"],
-      telefone: json["telefone"]
-      );
+      telefone: json["telefone"],
+      cep: json["cep"],
+      logradouro: json["logradouro"],
+      numeroResidencia: json["numeroResidencia"],
+      complemento: json["complemento"],
+      bairro: json["bairro"],
+      cidade: json["cidade"],
+      estado: json["estado"],
+      uf: json["uf"]);
 
   Map<String, dynamic> toJson() => {
         "idClient": idClient,
@@ -51,5 +73,13 @@ class ClientModel {
         "email": email,
         "confirmarEmail": confirmarEmail,
         "telefone": telefone,
+        "cep": cep,
+        "logradouro": logradouro,
+        "numeroResidencia": numeroResidencia,
+        "complemento": complemento,
+        "bairro": bairro,
+        "cidade": cidade,
+        "estado": estado,
+        "uf": uf
       };
 }
