@@ -29,6 +29,8 @@ def keystoreProperties = new Properties()
    }
 
 android {
+    namespace 'com.example.project_evydhence'
+    
     compileSdkVersion localProperties.getProperty('flutter.compileSdkVersion').toInteger()
 
     compileOptions {
