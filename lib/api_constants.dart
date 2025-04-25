@@ -2,7 +2,9 @@ class ApiConstants {
   // static String baseUrl =
   //     'https://projectevydhencebackend-production.up.railway.app';
 
-  static String baseUrl = 'http://127.0.0.1:8000';
+  //static String baseUrl = 'http://127.0.0.1:8000';
+
+  static String baseUrl = 'https://project-evydhence-backend.vercel.app';
 
   static String getClientsEndpoint = '/persons/';
   static String getClientEndpoint = '/persons/<int:pk>/';
@@ -21,4 +23,11 @@ class ApiConstants {
   static String postSchedulesEndpoint = '/schedules/create/';
   static String putSchedulesEndpoint = '/schedules/<int:pk>/update/';
   static String deleteSchedulesEndpoint = '/schedules/<int:pk>/delete/';
+
+  static String getTotalClientsEndpoint = '/persons/total/';
+  static String getTotalClientsByGenderEndpoint = '/persons/total/gender';
+
+  static String getTotalSchedulesByMonthsEndpoint = '/schedules/total/months/';
+
+  static String getTotalVehiclesEndpoint = '/vehicles/total/';
 }

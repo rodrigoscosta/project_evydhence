@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:project_evydhence/api_constants.dart';
 import 'package:project_evydhence/models/client_model.dart';
 import 'package:project_evydhence/models/schedule_model.dart';
+import 'package:project_evydhence/models/total_clientes_model.dart';
+import 'package:project_evydhence/models/total_clientes_por_genero_model.dart';
 import 'package:project_evydhence/models/vehicle_model.dart';
 
 class ApiService {
@@ -51,6 +53,7 @@ class ApiService {
       String cpfCnpj,
       String rg,
       String dataNascFund,
+      String sexo,
       String email,
       String confirmarEmail,
       String telefone,
@@ -73,6 +76,7 @@ class ApiService {
         'cpfCnpj': cpfCnpj,
         'rg': rg,
         'dataNascFund': dataNascFund,
+        'sexo': sexo,
         'email': email,
         'confirmarEmail': confirmarEmail,
         'telefone': telefone,
@@ -98,6 +102,7 @@ class ApiService {
       String cpfCnpj,
       String rg,
       String dataNascFund,
+      String sexo,
       String email,
       String confirmarEmail,
       String telefone,
@@ -120,6 +125,7 @@ class ApiService {
         'cpfCnpj': cpfCnpj,
         'rg': rg,
         'dataNascFund': dataNascFund,
+        'sexo': sexo,
         'email': email,
         'confirmarEmail': confirmarEmail,
         'telefone': telefone,
@@ -335,5 +341,96 @@ class ApiService {
     } else {
       return false; // Retorna false se não foi excluido
     }
+  }
+
+  Future<TotalClientesModel> totalClientes() async {
+    TotalClientesModel totalClientesModel = TotalClientesModel(qtdClientes: 0);
+    try {
+      var url = Uri.parse(
+          ApiConstants.baseUrl + ApiConstants.getTotalClientsEndpoint);
+      var response = await http.get(url);
+
+      if (response.statusCode == HttpStatus.ok) {
+        final decodedData = jsonDecode(response.body);
+        totalClientesModel =
+            TotalClientesModel(qtdClientes: decodedData['qtdClientes'] ?? 0);
+        0;
+      }
+    } catch (_) {
+      totalClientesModel = TotalClientesModel(qtdClientes: 0);
+    }
+
+    return totalClientesModel;
+  }
+
+  Future<List<TotalClientesPorGeneroModel>> totalClientesPorGenero() async {
+    List<TotalClientesPorGeneroModel> totalClientesList = [];
+
+    try {
+      var url = Uri.parse(
+          ApiConstants.baseUrl + ApiConstants.getTotalClientsByGenderEndpoint);
+      var response = await http.get(url);
+
+      if (response.statusCode == HttpStatus.ok) {
+        final List<dynamic> decodedData = jsonDecode(response.body);
+
+        totalClientesList = decodedData.map((item) {
+          return TotalClientesPorGeneroModel(
+            qtdClientes: item['qtdClientes'] ?? 0,
+            sexo: item['sexo'] ?? '',
+          );
+        }).toList();
+      }
+    } catch (_) {
+      totalClientesList = [];
+    }
+
+    return totalClientesList;
+  }
+
+  Future<List<TotalVistoriasRealizadasPorMesModel>>
+      totalVistoriasFeitasPorMes() async {
+    List<TotalVistoriasRealizadasPorMesModel> totalVistoriasList = [];
+
+    try {
+      var url = Uri.parse(ApiConstants.baseUrl +
+          ApiConstants.getTotalSchedulesByMonthsEndpoint);
+      var response = await http.get(url);
+
+      if (response.statusCode == HttpStatus.ok) {
+        final List<dynamic> decodedData = jsonDecode(response.body);
+
+        totalVistoriasList = decodedData.map((item) {
+          return TotalVistoriasRealizadasPorMesModel(
+            qtdVistorias: item['qtdVistorias'] ?? 0,
+            mes: item['mes'] ?? '',
+          );
+        }).toList();
+      }
+    } catch (_) {
+      totalVistoriasList = [];
+    }
+
+    return totalVistoriasList;
+  }
+
+  Future<TotalVehiclesModel> totalVeiculos() async {
+    TotalVehiclesModel totalVeiculosModel = TotalVehiclesModel(qtdVeiculos: 0);
+    try {
+      var url = Uri.parse(
+          ApiConstants.baseUrl + ApiConstants.getTotalVehiclesEndpoint);
+      var response = await http.get(url);
+
+      if (response.statusCode == HttpStatus.ok) {
+        final decodedData = jsonDecode(response.body);
+        totalVeiculosModel =
+            TotalVehiclesModel(qtdVeiculos: decodedData['qtdVeiculos'] ?? 0);
+        0;
+      }
+    } catch (_) {
+      totalVeiculosModel = TotalVehiclesModel(qtdVeiculos: 0);
+    }
+
+    return totalVeiculosModel;
   }
 }

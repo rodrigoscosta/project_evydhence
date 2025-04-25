@@ -1,8 +1,20 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:project_evydhence/components/button.dart';
+import 'package:project_evydhence/controllers/dashboard_controller.dart';
+import 'package:project_evydhence/models/schedule_model.dart';
+import 'package:project_evydhence/models/total_clientes_model.dart';
+import 'package:project_evydhence/models/total_clientes_por_genero_model.dart';
 import 'package:project_evydhence/provider/zoom_provider.dart';
-import 'package:project_evydhence/routes/app_routes.dart';
+
+final List<Color> colorPalette = [
+  Colors.blue,
+  Colors.green,
+  Colors.red,
+  Colors.orange,
+  Colors.purple,
+  Colors.yellow,
+];
 
 class DashboardPage extends StatefulWidget {
   final bool isDarkMode;
@@ -19,24 +31,23 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  bool _isInitializing = true;
   final zoomProvider = GetIt.I<ZoomProvider>();
-
-  @override
-  void didChangeDependencies() {
-    if (_isInitializing) {
-      _initialization();
-    }
-    super.didChangeDependencies();
-  }
-
-  void _initialization() {
-    _isInitializing = false;
-  }
+  final DashboardController _dashboard = GetIt.I<DashboardController>();
 
   @override
   void initState() {
     super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await Future.wait([
+      _dashboard.loadTotalClientes(),
+      _dashboard.loadTotalClientesPorGenero(),
+      _dashboard.loadTotalVistoriasFeitasPorMes(),
+      _dashboard.loadTotalVeiculos(),
+    ]);
+    if (mounted) setState(() {});
   }
 
   void _toggleTheme(bool isDarkMode) {
@@ -45,103 +56,344 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final scale = zoomProvider.scaleFactor;
+
     return Scaffold(
       backgroundColor: widget.isDarkMode ? Colors.black : Colors.white,
-      appBar: AppBar(
-        centerTitle: false,
-        title: Text(
-          'Dashboard',
-          style: TextStyle(
-            fontSize: 24.0 * zoomProvider.scaleFactor,
-            fontWeight: FontWeight.w500,
-            color: widget.isDarkMode ? Colors.white : Colors.black,
-          ),
-        ),
-        leading: IconButton(
-          tooltip: 'Voltar',
-          iconSize: 28.0 * zoomProvider.scaleFactor,
-          icon: Icon(
-            Icons.arrow_back,
-            color: widget.isDarkMode ? Colors.white : Colors.black,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        actions: _buildAppBarActions(),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              'Ir para a Home',
-              style: TextStyle(
-                fontSize: 18.0 * zoomProvider.scaleFactor,
-                color: Colors.white,
+      appBar: _buildAppBar(scale),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0 * scale),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: DashboardCard(
+                      title: 'Total de clientes cadastrados',
+                      isDarkMode: widget.isDarkMode,
+                      scale: scale,
+                      child: _dashboard.loadingTotalClientes
+                          ? const Center(child: CircularProgressIndicator())
+                          : Center(
+                              child: Text(
+                                _dashboard.totalClientes.isNotEmpty
+                                    ? _dashboard.totalClientes[0].qtdClientes
+                                        .toString()
+                                    : '0',
+                                style: TextStyle(
+                                  fontSize: 40 * scale,
+                                  fontWeight: FontWeight.w500,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                  SizedBox(width: 16.0 * scale),
+                  Expanded(
+                    child: DashboardCard(
+                      title: 'Total de veículos cadastrados',
+                      isDarkMode: widget.isDarkMode,
+                      scale: scale,
+                      child: _dashboard.loadingTotalVeiculos
+                          ? const Center(child: CircularProgressIndicator())
+                          : Center(
+                              child: Text(
+                                _dashboard.totalVeiculos.isNotEmpty
+                                    ? _dashboard.totalVeiculos[0].qtdVeiculos
+                                        .toString()
+                                    : '0',
+                                style: TextStyle(
+                                  fontSize: 40 * scale,
+                                  fontWeight: FontWeight.w500,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                  SizedBox(width: 16.0 * scale),
+                  Expanded(
+                    child: DashboardCard(
+                      title: 'Total de clientes por gênero',
+                      isDarkMode: widget.isDarkMode,
+                      scale: scale,
+                      child: _dashboard.loadingTotalClientesPorGenero
+                          ? const Center(child: CircularProgressIndicator())
+                          : TotalClientesPorGenero(
+                              isDarkMode: widget.isDarkMode,
+                              scale: scale,
+                            ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              SizedBox(height: 16.0 * scale),
+              DashboardCard(
+                title: 'Total de vistorias realizadas por mês',
+                isDarkMode: widget.isDarkMode,
+                scale: scale,
+                child: _dashboard.loadingTotalVistoriasFeitasPorMes
+                    ? const Center(child: CircularProgressIndicator())
+                    : TotalVistoriasRealizadas(
+                        isDarkMode: widget.isDarkMode,
+                        scale: scale,
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildAppBarActions() {
-    return [
-      Row(
+  AppBar _buildAppBar(double scale) {
+    return AppBar(
+      centerTitle: false,
+      title: Text(
+        'Dashboard',
+        style: TextStyle(
+          fontSize: 24.0 * scale,
+          fontWeight: FontWeight.w500,
+          color: widget.isDarkMode ? Colors.white : Colors.black,
+        ),
+      ),
+      leading: IconButton(
+        tooltip: 'Voltar',
+        iconSize: 28.0 * scale,
+        icon: Icon(
+          Icons.arrow_back,
+          color: widget.isDarkMode ? Colors.white : Colors.black,
+        ),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      actions: [
+        Icon(
+          widget.isDarkMode ? Icons.brightness_2 : Icons.brightness_5,
+          color: widget.isDarkMode ? Colors.white : Colors.black,
+          size: 28.0 * scale,
+        ),
+        Switch(
+          value: widget.isDarkMode,
+          onChanged: _toggleTheme,
+          activeColor: Colors.blue,
+          inactiveTrackColor: Colors.grey,
+          inactiveThumbColor: Colors.white,
+          activeTrackColor: Colors.blueAccent,
+        ),
+        IconButton(
+          iconSize: 28.0 * scale,
+          tooltip: 'Aumentar zoom',
+          icon: Icon(Icons.zoom_in,
+              color: widget.isDarkMode ? Colors.white : Colors.black),
+          onPressed: () => setState(() => zoomProvider.increaseZoom()),
+        ),
+        IconButton(
+          iconSize: 28.0 * scale,
+          tooltip: 'Diminuir zoom',
+          icon: Icon(Icons.zoom_out,
+              color: widget.isDarkMode ? Colors.white : Colors.black),
+          onPressed: () => setState(() => zoomProvider.decreaseZoom()),
+        ),
+      ],
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+    );
+  }
+}
+
+class DashboardCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+  final bool isDarkMode;
+  final double scale;
+
+  const DashboardCard({
+    Key? key,
+    required this.title,
+    required this.child,
+    required this.isDarkMode,
+    required this.scale,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.all(8 * scale),
+      color: isDarkMode ? Colors.grey[900] : Colors.white,
+      child: Column(
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                widget.isDarkMode ? Icons.brightness_2 : Icons.brightness_5,
-                color: widget.isDarkMode ? Colors.white : Colors.black,
-                size: 28.0 * zoomProvider.scaleFactor,
+          Padding(
+            padding: EdgeInsets.all(16.0 * scale),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 16 * scale,
+                fontWeight: FontWeight.w500,
+                color: isDarkMode ? Colors.white : Colors.black,
               ),
-              Switch(
-                value: widget.isDarkMode,
-                onChanged: (value) {
-                  _toggleTheme(value);
-                },
-                activeColor: Colors.blue,
-                inactiveTrackColor: Colors.grey,
-                inactiveThumbColor: Colors.white,
-                activeTrackColor: Colors.blueAccent,
-              ),
-              // Botão de Zoom
-              IconButton(
-                iconSize: 28.0 * zoomProvider.scaleFactor,
-                tooltip: 'Aumentar zoom',
-                icon: Icon(
-                  Icons.zoom_in,
-                  color: widget.isDarkMode ? Colors.white : Colors.black,
-                ),
-                onPressed: () {
-                  setState(() {
-                    zoomProvider.increaseZoom();
-                  });
-                },
-              ),
-              IconButton(
-                iconSize: 28.0 * zoomProvider.scaleFactor,
-                tooltip: 'Diminuir zoom',
-                icon: Icon(
-                  Icons.zoom_out,
-                  color: widget.isDarkMode ? Colors.white : Colors.black,
-                ),
-                onPressed: () {
-                  setState(() {
-                    zoomProvider.decreaseZoom();
-                  });
-                },
-              ),
-            ],
+            ),
           ),
+          SizedBox(height: 200 * scale, child: child),
         ],
       ),
-    ];
+    );
+  }
+}
+
+class SimpleBarChart<T> extends StatelessWidget {
+  final List<T> data;
+  final double Function(T) getValue;
+  final String Function(T) getLabel;
+  final bool isDarkMode;
+  final double scale;
+
+  const SimpleBarChart({
+    super.key,
+    required this.data,
+    required this.getValue,
+    required this.getLabel,
+    required this.isDarkMode,
+    required this.scale,
+  });
+
+  List<BarChartGroupData> _generateBarGroup() {
+    return data.asMap().entries.map((entry) {
+      int index = entry.key;
+      T item = entry.value;
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: getValue(item),
+            color: colorPalette[index % colorPalette.length],
+            width: 25 * scale,
+            borderRadius: BorderRadius.circular(4 * scale),
+          ),
+        ],
+      );
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                int index = value.toInt();
+                if (index >= 0 && index < data.length) {
+                  return Transform.rotate(
+                    angle: -0.3,
+                    child: Text(
+                      getLabel(data[index]),
+                      style: TextStyle(
+                        fontSize: 10 * scale,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: TextStyle(
+                    fontSize: 12 * scale,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                );
+              },
+            ),
+          ),
+          topTitles: const AxisTitles(),
+          rightTitles: const AxisTitles(),
+        ),
+        gridData: FlGridData(
+          show: true,
+          getDrawingHorizontalLine: (value) => FlLine(
+            color: isDarkMode ? Colors.white12 : Colors.black12,
+            strokeWidth: 1,
+          ),
+        ),
+        borderData: FlBorderData(show: false),
+        barGroups: _generateBarGroup(),
+      ),
+    );
+  }
+}
+
+class TotalClientesPorGenero extends StatelessWidget {
+  final bool isDarkMode;
+  final double scale;
+  const TotalClientesPorGenero(
+      {super.key, required this.isDarkMode, required this.scale});
+
+  @override
+  Widget build(BuildContext context) {
+    final dashboard = GetIt.I<DashboardController>();
+    return SimpleBarChart<TotalClientesPorGeneroModel>(
+      data: dashboard.totalClientesPorGenero,
+      getValue: (cliente) => cliente.qtdClientes.toDouble(),
+      getLabel: (cliente) => cliente.sexo,
+      isDarkMode: isDarkMode,
+      scale: scale,
+    );
+  }
+}
+
+class TotalVistoriasRealizadas extends StatelessWidget {
+  final bool isDarkMode;
+  final double scale;
+  const TotalVistoriasRealizadas(
+      {super.key, required this.isDarkMode, required this.scale});
+
+  @override
+  Widget build(BuildContext context) {
+    final dashboard = GetIt.I<DashboardController>();
+    return SimpleBarChart<TotalVistoriasRealizadasPorMesModel>(
+      data: dashboard.totalVistoriasFeitasPorMes,
+      getValue: (vistoria) => vistoria.qtdVistorias.toDouble(),
+      getLabel: (vistoria) => vistoria.mes,
+      isDarkMode: isDarkMode,
+      scale: scale,
+    );
+  }
+}
+
+class TotalClientes extends StatelessWidget {
+  final bool isDarkMode;
+  final double scale;
+  const TotalClientes(
+      {super.key, required this.isDarkMode, required this.scale});
+
+  @override
+  Widget build(BuildContext context) {
+    final dashboard = GetIt.I<DashboardController>();
+    return SimpleBarChart<TotalClientesModel>(
+      data: dashboard.totalClientes,
+      getValue: (cliente) => cliente.qtdClientes.toDouble(),
+      getLabel: (cliente) => cliente.qtdClientes.toString(),
+      isDarkMode: isDarkMode,
+      scale: scale,
+    );
   }
 }

@@ -84,8 +84,6 @@ class Button extends StatelessWidget {
         return _buildTextButton();
       case ButtonFlavor.dotted:
         return _buildDottedButton();
-      default:
-        throw UnimplementedError('invalid flavor');
     }
   }
 

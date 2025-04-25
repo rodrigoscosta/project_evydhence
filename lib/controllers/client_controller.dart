@@ -36,6 +36,7 @@ class ClientController with Store {
     setEmail('');
     setConfirmarEmail('');
     setDataNascFund('');
+    setSexo('');
   }
 
   @computed
@@ -46,7 +47,14 @@ class ClientController with Store {
       email.isNotEmpty &&
       confirmarEmail.isNotEmpty &&
       confirmarEmailEqualsToEmail &&
-      dataNascFund.isNotEmpty;
+      dataNascFund.isNotEmpty &&
+      sexo!.isNotEmpty &&
+      cep.isNotEmpty &&
+      logradouro.isNotEmpty &&
+      numeroResidencia.isNotEmpty &&
+      bairro.isNotEmpty &&
+      cidade.isNotEmpty &&
+      estado.isNotEmpty;
 
   ClientModel createClientFromForm() {
     return ClientModel(
@@ -58,6 +66,7 @@ class ClientController with Store {
         email: email,
         confirmarEmail: confirmarEmail,
         dataNascFund: dataNascFund,
+        sexo: sexo!,
         cep: cep,
         logradouro: logradouro,
         numeroResidencia: numeroResidencia,
@@ -129,6 +138,12 @@ class ClientController with Store {
   DateTime? get dataFundacaoAsDateTime => dataNascFund.isEmpty
       ? null
       : fromDateUsingPatternToDateTime(dataNascFund);
+
+  @observable
+  String? sexo = '';
+
+  @action
+  void setSexo(String? value) => sexo = value;
 
   @observable
   String cep = '';

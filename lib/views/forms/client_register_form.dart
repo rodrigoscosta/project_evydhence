@@ -91,8 +91,8 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
 
     if (widget.client != null && widget.clientId != null) {
       ApiService apiService = ApiService(); // Create an instance of ApiService
-      ClientModel? updatedClient = await apiService.getClientById(
-          widget.clientId!);
+      ClientModel? updatedClient =
+          await apiService.getClientById(widget.clientId!);
       if (updatedClient != null) {
         setState(() {
           _currentClient = updatedClient;
@@ -113,6 +113,8 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
 
       _rgController.text = client.rg;
       cliente.setRg(client.rg);
+
+      cliente.setSexo(client.sexo);
 
       _telefoneController.text = _phoneMask.format(client.telefone);
       cliente.setTelefone(client.telefone);
@@ -326,13 +328,14 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
         keepOnlyDigits(cliente.cpfCnpj),
         cliente.rg,
         cliente.dataNascFund,
+        cliente.sexo!,
         cliente.email,
         cliente.confirmarEmail,
         keepOnlyDigits(cliente.telefone),
         keepOnlyDigits(cliente.cep),
         cliente.logradouro,
         cliente.numeroResidencia,
-        cliente.complemento ?? " ",
+        cliente.complemento,
         cliente.bairro,
         cliente.cidade,
         cliente.estado,
@@ -346,13 +349,14 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
         cliente.cpfCnpj,
         cliente.rg,
         cliente.dataNascFund,
+        cliente.sexo!,
         cliente.email,
         cliente.confirmarEmail,
         keepOnlyDigits(cliente.telefone),
         keepOnlyDigits(cliente.cep),
         cliente.logradouro,
         cliente.numeroResidencia,
-        cliente.complemento ?? " ",
+        cliente.complemento,
         cliente.bairro,
         cliente.cidade,
         cliente.estado,
@@ -672,6 +676,91 @@ class _ClientRegisterFormState extends State<ClientRegisterForm> {
                                       }
                                     },
                                   ),
+                                ),
+                              ),
+                              DropdownButtonHideUnderline(
+                                child: DropdownButtonFormField<String>(
+                                  decoration: InputDecoration(
+                                    label: Text.rich(
+                                      TextSpan(
+                                        text: 'Gênero',
+                                        children: [
+                                          TextSpan(
+                                            text: ' *',
+                                            style: TextStyle(
+                                              fontSize: 16.0 *
+                                                  zoomProvider.scaleFactor,
+                                              color: widget.isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    filled: true,
+                                    fillColor: widget.isDarkMode
+                                        ? Colors.grey[800]
+                                        : Colors.white,
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                    ),
+                                    enabledBorder: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
+                                    focusedBorder: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.blue),
+                                    ),
+                                    labelStyle: TextStyle(
+                                      fontSize: 16.0 * zoomProvider.scaleFactor,
+                                      color: widget.isDarkMode
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                  dropdownColor: widget.isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  value: (cliente.sexo == 'M' ||
+                                          cliente.sexo == 'F')
+                                      ? cliente.sexo
+                                      : null,
+                                  onChanged: cliente.setSexo,
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: 'M',
+                                      child: Text(
+                                        'Masculino',
+                                        style: TextStyle(
+                                          fontSize:
+                                              16.0 * zoomProvider.scaleFactor,
+                                          color: widget.isDarkMode
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'F',
+                                      child: Text(
+                                        'Feminino',
+                                        style: TextStyle(
+                                          fontSize:
+                                              16.0 * zoomProvider.scaleFactor,
+                                          color: widget.isDarkMode
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               TextInputFormField(

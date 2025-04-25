@@ -40,3 +40,17 @@ class ScheduleModel {
         "observacao": observacao,
       };
 }
+
+class TotalVistoriasRealizadasPorMesModel {
+  final int qtdVistorias;
+  final String mes;
+
+  TotalVistoriasRealizadasPorMesModel({required this.qtdVistorias, required this.mes});
+
+  factory TotalVistoriasRealizadasPorMesModel.fromJson(Map<String, dynamic> json) {
+    return TotalVistoriasRealizadasPorMesModel(
+      qtdVistorias: json['qtdVistorias'] ?? 0,
+      mes: json['mes'] ?? '',
+    );
+  }
+}

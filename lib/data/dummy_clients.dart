@@ -12,6 +12,7 @@ final DUMMY_CLIENTS = {
     email: faker.internet.email(),
     confirmarEmail: faker.internet.email(),
     dataNascFund: DateTime.now().toString(),
+    sexo: 'Masculino',
     cep: faker.randomGenerator.string(16),
     logradouro: faker.address.streetName(),
     numeroResidencia: faker.randomGenerator.string(5),
@@ -32,6 +33,7 @@ final DUMMY_CLIENTS = {
     email: faker.internet.email(),
     confirmarEmail: faker.internet.email(),
     dataNascFund: DateTime.now().toString(),
+    sexo: 'Feminino',
     cep: faker.randomGenerator.string(16),
     logradouro: faker.address.streetName(),
     numeroResidencia: faker.randomGenerator.string(5),
@@ -52,6 +54,7 @@ final DUMMY_CLIENTS = {
     email: faker.internet.email(),
     confirmarEmail: faker.internet.email(),
     dataNascFund: DateTime.now().toString(),
+    sexo: 'Masculino',
     //listaVeiculos: []
     cep: faker.randomGenerator.string(16),
     logradouro: faker.address.streetName(),

@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/components/button.dart';
 import 'package:project_evydhence/provider/zoom_provider.dart';
 import 'package:project_evydhence/routes/app_routes.dart';
-import 'package:project_evydhence/views/dashboard_page.dart';
 
 class HomePage extends StatefulWidget {
   final bool isDarkMode;

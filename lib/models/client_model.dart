@@ -16,6 +16,7 @@ class ClientModel {
     required this.cpfCnpj,
     required this.rg,
     required this.dataNascFund,
+    required this.sexo,
     required this.email,
     required this.confirmarEmail,
     required this.telefone,
@@ -34,6 +35,7 @@ class ClientModel {
   String cpfCnpj;
   String rg;
   String dataNascFund;
+  String sexo;
   String email;
   String confirmarEmail;
   String telefone;
@@ -52,6 +54,7 @@ class ClientModel {
       cpfCnpj: json["cpfCnpj"],
       rg: json["rg"],
       dataNascFund: json["dataNascFund"],
+      sexo: json["sexo"],
       email: json["email"],
       confirmarEmail: json["confirmarEmail"],
       telefone: json["telefone"],
@@ -70,6 +73,7 @@ class ClientModel {
         "cpfCnpj": cpfCnpj,
         "rg": rg,
         "dataNascFund": dataNascFund,
+        "sexo": sexo,
         "email": email,
         "confirmarEmail": confirmarEmail,
         "telefone": telefone,

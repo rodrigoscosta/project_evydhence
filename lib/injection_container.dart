@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
+import 'package:project_evydhence/controllers/dashboard_controller.dart';
 import 'package:project_evydhence/controllers/schedule_controller.dart';
 import 'package:project_evydhence/controllers/vehicle_controller.dart';
 import 'package:project_evydhence/provider/zoom_provider.dart';
@@ -33,6 +34,9 @@ class InjectionContainer {
     );
     sl.registerLazySingleton<ScheduleController>(
       () => ScheduleController(),
+    );
+    sl.registerLazySingleton<DashboardController>(
+      () => DashboardController(),
     );
   }
 

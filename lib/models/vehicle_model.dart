@@ -48,3 +48,15 @@ class VehicleModel {
         "anoModelo": anoModelo
       };
 }
+
+class TotalVehiclesModel {
+  final int qtdVeiculos;
+
+  TotalVehiclesModel({required this.qtdVeiculos});
+
+  factory TotalVehiclesModel.fromJson(Map<String, dynamic> json) {
+    return TotalVehiclesModel(
+      qtdVeiculos: json['qtdVeiculos'] ?? 0,
+    );
+  }
+}
