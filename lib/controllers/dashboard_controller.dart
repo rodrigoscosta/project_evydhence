@@ -6,7 +6,11 @@ import 'package:project_evydhence/models/total_clientes_por_genero_model.dart';
 import 'package:project_evydhence/models/vehicle_model.dart';
 import 'package:project_evydhence/services/api_service.dart';
 
-class DashboardController with Store {
+part 'dashboard_controller.g.dart';
+
+class DashboardController = _DashboardControllerBase with _$DashboardController;
+
+abstract class _DashboardControllerBase with Store {
   final ApiService _dashBoardService = ApiService();
 
   @observable
@@ -23,9 +27,14 @@ class DashboardController with Store {
   void setTotalClientesPorGenero(List<TotalClientesPorGeneroModel> value) =>
       totalClientesPorGenero = ObservableList.of(value);
 
+  // @observable
+  // List<TotalVistoriasRealizadasPorMesModel> totalVistoriasFeitasPorMes =
+  //     ObservableList();
+
   @observable
-  List<TotalVistoriasRealizadasPorMesModel> totalVistoriasFeitasPorMes =
-      ObservableList();
+  ObservableList<TotalVistoriasRealizadasPorMesModel>
+      totalVistoriasFeitasPorMes =
+      ObservableList<TotalVistoriasRealizadasPorMesModel>();
 
   @action
   void setTotalVistoriasFeitasPorMes(
@@ -38,6 +47,14 @@ class DashboardController with Store {
   @action
   void setTotalVeiculos(List<TotalVehiclesModel> value) =>
       totalVeiculos = ObservableList.of(value);
+
+  @observable
+  String anoSelecionado = DateTime.now().year.toString();
+
+  @action
+  void setAnoSelecionado(String ano) {
+    anoSelecionado = ano;
+  }
 
   @observable
   bool loadingTotalClientes = false;
@@ -70,7 +87,7 @@ class DashboardController with Store {
 
   @action
   Future<void> loadTotalClientesPorGenero() async {
-    loadingTotalVistoriasFeitasPorMes = true;
+    loadingTotalClientesPorGenero = true;
     try {
       final List<TotalClientesPorGeneroModel> results =
           await _dashBoardService.totalClientesPorGenero();
@@ -80,25 +97,41 @@ class DashboardController with Store {
       setTotalClientesPorGenero([]);
       loadDashboardError = 'Ocorreu um erro ao buscar os clientes por gênero.';
     } finally {
-      loadingTotalVistoriasFeitasPorMes = false;
+      loadingTotalClientesPorGenero = false;
     }
   }
 
   @action
-  Future<void> loadTotalVistoriasFeitasPorMes() async {
-    loadingTotalClientesPorGenero = true;
+  Future<void> loadTotalVistoriasFeitasPorMes(String ano) async {
+    loadingTotalVistoriasFeitasPorMes = true;
     try {
       final List<TotalVistoriasRealizadasPorMesModel> results =
-          await _dashBoardService.totalVistoriasFeitasPorMes();
+          await _dashBoardService.totalVistoriasFeitasPorMes(ano);
 
       setTotalVistoriasFeitasPorMes(results);
-    } on DioException catch (_) {
+    } catch (_) {
       setTotalVistoriasFeitasPorMes([]);
-      loadDashboardError = 'Ocorreu um erro ao buscar as vistorias.';
+      loadDashboardError = 'Erro ao buscar vistorias.';
     } finally {
-      loadingTotalClientesPorGenero = false;
+      loadingTotalVistoriasFeitasPorMes = false;
     }
   }
+
+  // @action
+  // Future<void> loadTotalVistoriasFeitasPorMes() async {
+  //   loadingTotalClientesPorGenero = true;
+  //   try {
+  //     final List<TotalVistoriasRealizadasPorMesModel> results =
+  //         await _dashBoardService.totalVistoriasFeitasPorMes();
+
+  //     setTotalVistoriasFeitasPorMes(results);
+  //   } on DioException catch (_) {
+  //     setTotalVistoriasFeitasPorMes([]);
+  //     loadDashboardError = 'Ocorreu um erro ao buscar as vistorias.';
+  //   } finally {
+  //     loadingTotalClientesPorGenero = false;
+  //   }
+  // }
 
   @action
   Future<void> loadTotalVeiculos() async {

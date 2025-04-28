@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/controllers/dashboard_controller.dart';
 import 'package:project_evydhence/models/schedule_model.dart';
@@ -41,11 +42,13 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _loadData() async {
+    final anoAtual = DateTime.now().year.toString();
+    _dashboard.anoSelecionado = anoAtual;
     await Future.wait([
       _dashboard.loadTotalClientes(),
       _dashboard.loadTotalClientesPorGenero(),
-      _dashboard.loadTotalVistoriasFeitasPorMes(),
       _dashboard.loadTotalVeiculos(),
+      _dashboard.loadTotalVistoriasFeitasPorMes(anoAtual),
     ]);
     if (mounted) setState(() {});
   }
@@ -135,16 +138,86 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
               SizedBox(height: 16.0 * scale),
-              DashboardCard(
-                title: 'Total de vistorias realizadas por mês',
-                isDarkMode: widget.isDarkMode,
-                scale: scale,
-                child: _dashboard.loadingTotalVistoriasFeitasPorMes
-                    ? const Center(child: CircularProgressIndicator())
-                    : TotalVistoriasRealizadas(
-                        isDarkMode: widget.isDarkMode,
-                        scale: scale,
-                      ),
+              Observer(
+                builder: (_) {
+                  return DashboardCard(
+                    title: 'Total de vistorias realizadas por mês/ano',
+                    isDarkMode: widget.isDarkMode,
+                    scale: scale,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: DropdownButton<String>(
+                              value: _dashboard.anoSelecionado,
+                              onChanged: _dashboard
+                                      .loadingTotalVistoriasFeitasPorMes
+                                  ? null
+                                  : (String? newValue) async {
+                                      if (newValue != null &&
+                                          newValue !=
+                                              _dashboard.anoSelecionado) {
+                                        _dashboard.setAnoSelecionado(newValue);
+                                        await _dashboard
+                                            .loadTotalVistoriasFeitasPorMes(
+                                                newValue);
+                                      }
+                                    },
+                              items: List.generate(
+                                5,
+                                (index) {
+                                  final ano =
+                                      (DateTime.now().year - index).toString();
+                                  return DropdownMenuItem(
+                                    value: ano,
+                                    child: Text(
+                                      ano,
+                                      style: TextStyle(
+                                        fontSize: 16 * scale,
+                                        fontWeight: FontWeight.w500,
+                                        color: widget.isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              style: TextStyle(
+                                fontSize: 16 * scale,
+                                fontWeight: FontWeight.w500,
+                                color: widget.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                              dropdownColor: widget.isDarkMode
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: _dashboard.loadingTotalVistoriasFeitasPorMes
+                              ? const Center(child: CircularProgressIndicator())
+                              : SimpleBarChart<
+                                  TotalVistoriasRealizadasPorMesModel>(
+                                  data: _dashboard.totalVistoriasFeitasPorMes
+                                      .toList(),
+                                  getValue: (vistoria) =>
+                                      vistoria.qtdVistorias.toDouble(),
+                                  getLabel: (vistoria) => vistoria.mes,
+                                  isDarkMode: widget.isDarkMode,
+                                  scale: scale,
+                                ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -363,18 +436,50 @@ class TotalClientesPorGenero extends StatelessWidget {
 class TotalVistoriasRealizadas extends StatelessWidget {
   final bool isDarkMode;
   final double scale;
-  const TotalVistoriasRealizadas(
-      {super.key, required this.isDarkMode, required this.scale});
+
+  const TotalVistoriasRealizadas({
+    super.key,
+    required this.isDarkMode,
+    required this.scale,
+  });
 
   @override
   Widget build(BuildContext context) {
     final dashboard = GetIt.I<DashboardController>();
-    return SimpleBarChart<TotalVistoriasRealizadasPorMesModel>(
-      data: dashboard.totalVistoriasFeitasPorMes,
-      getValue: (vistoria) => vistoria.qtdVistorias.toDouble(),
-      getLabel: (vistoria) => vistoria.mes,
-      isDarkMode: isDarkMode,
-      scale: scale,
+
+    return Observer(
+      builder: (_) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownButton<String>(
+              value: dashboard.anoSelecionado,
+              icon: const Icon(Icons.arrow_drop_down),
+              onChanged: (String? newValue) {
+                if (newValue != null && newValue != dashboard.anoSelecionado) {
+                  dashboard.anoSelecionado = newValue;
+                  dashboard.loadTotalVistoriasFeitasPorMes(newValue);
+                }
+              },
+              items: List.generate(5, (index) {
+                final ano = (DateTime.now().year - index).toString();
+                return DropdownMenuItem<String>(
+                  value: ano,
+                  child: Text(ano),
+                );
+              }),
+            ),
+            const SizedBox(height: 16),
+            SimpleBarChart<TotalVistoriasRealizadasPorMesModel>(
+              data: dashboard.totalVistoriasFeitasPorMes,
+              getValue: (vistoria) => vistoria.qtdVistorias.toDouble(),
+              getLabel: (vistoria) => vistoria.mes,
+              isDarkMode: isDarkMode,
+              scale: scale,
+            ),
+          ],
+        );
+      },
     );
   }
 }

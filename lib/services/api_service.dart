@@ -388,13 +388,14 @@ class ApiService {
     return totalClientesList;
   }
 
-  Future<List<TotalVistoriasRealizadasPorMesModel>>
-      totalVistoriasFeitasPorMes() async {
+  Future<List<TotalVistoriasRealizadasPorMesModel>> totalVistoriasFeitasPorMes(
+      String? ano) async {
     List<TotalVistoriasRealizadasPorMesModel> totalVistoriasList = [];
 
     try {
       var url = Uri.parse(ApiConstants.baseUrl +
-          ApiConstants.getTotalSchedulesByMonthsEndpoint);
+          ApiConstants.getTotalSchedulesByMonthsEndpoint +
+          '?ano=$ano'); // Adicionando o parâmetro de ano
       var response = await http.get(url);
 
       if (response.statusCode == HttpStatus.ok) {
@@ -413,6 +414,32 @@ class ApiService {
 
     return totalVistoriasList;
   }
+
+  // Future<List<TotalVistoriasRealizadasPorMesModel>>
+  //     totalVistoriasFeitasPorMes() async {
+  //   List<TotalVistoriasRealizadasPorMesModel> totalVistoriasList = [];
+
+  //   try {
+  //     var url = Uri.parse(ApiConstants.baseUrl +
+  //         ApiConstants.getTotalSchedulesByMonthsEndpoint);
+  //     var response = await http.get(url);
+
+  //     if (response.statusCode == HttpStatus.ok) {
+  //       final List<dynamic> decodedData = jsonDecode(response.body);
+
+  //       totalVistoriasList = decodedData.map((item) {
+  //         return TotalVistoriasRealizadasPorMesModel(
+  //           qtdVistorias: item['qtdVistorias'] ?? 0,
+  //           mes: item['mes'] ?? '',
+  //         );
+  //       }).toList();
+  //     }
+  //   } catch (_) {
+  //     totalVistoriasList = [];
+  //   }
+
+  //   return totalVistoriasList;
+  // }
 
   Future<TotalVehiclesModel> totalVeiculos() async {
     TotalVehiclesModel totalVeiculosModel = TotalVehiclesModel(qtdVeiculos: 0);

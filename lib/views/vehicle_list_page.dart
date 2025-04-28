@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:project_evydhence/controllers/client_controller.dart';
 import 'package:project_evydhence/controllers/schedule_controller.dart';
 import 'package:project_evydhence/controllers/vehicle_controller.dart';
-import 'package:project_evydhence/models/schedule_model.dart';
 import 'package:project_evydhence/models/vehicle_model.dart';
 import 'package:project_evydhence/provider/zoom_provider.dart';
 import 'package:project_evydhence/routes/app_routes.dart';
