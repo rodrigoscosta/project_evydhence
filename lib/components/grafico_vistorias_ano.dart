@@ -48,7 +48,11 @@ class _GraficoVistoriasAnoState extends State<GraficoVistoriasAno> {
   }
 
   List<DropdownMenuItem<String>> _buildAnoDropdown() {
-    final anos = ['2022', '2023', '2024', '2025'];
+    final int anoAtual = DateTime.now().year;
+    final List<String> anos = [
+      for (int ano = 2023; ano <= anoAtual; ano++) ano.toString()
+    ];
+
     return anos.map((ano) {
       return DropdownMenuItem<String>(
         value: ano,
@@ -57,56 +61,3 @@ class _GraficoVistoriasAnoState extends State<GraficoVistoriasAno> {
     }).toList();
   }
 }
-
-// class GraficoVistoriasAno extends StatelessWidget {
-//   final List<TotalVistoriasRealizadasPorMesModel> dados;
-//   final String anoSelecionado;
-//   final Function(String?) onAnoSelecionado;
-
-//   const GraficoVistoriasAno({
-//     super.key,
-//     required this.dados,
-//     required this.anoSelecionado,
-//     required this.onAnoSelecionado,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         // Adiciona o DropdownButton
-//         DropdownButton<String>(
-//           value: anoSelecionado,
-//           items: _buildAnoDropdown(),
-//           onChanged: onAnoSelecionado,
-//         ),
-
-//         // Adiciona Expanded para garantir que o gráfico ocupe o espaço correto
-//         Expanded(
-//           child: SimpleBarChart<TotalVistoriasRealizadasPorMesModel>(
-//             data: dados,
-//             getValue: (vistoria) => vistoria.qtdVistorias.toDouble(),
-//             getLabel: (vistoria) => vistoria.mes,
-//             isDarkMode: true, // Ajuste conforme necessário
-//             scale: 1.0, // Aplique a escala se necessário
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-
-//   List<DropdownMenuItem<String>> _buildAnoDropdown() {
-//     final anos = [
-//       '2022',
-//       '2023',
-//       '2024',
-//       '2025' // Adicione os anos que você deseja como opções
-//     ];
-//     return anos.map((ano) {
-//       return DropdownMenuItem<String>(
-//         value: ano,
-//         child: Text(ano),
-//       );
-//     }).toList();
-//   }
-// }
