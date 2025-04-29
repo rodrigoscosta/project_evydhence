@@ -1,0 +1,2 @@
+C:/Arquivos pessoais/Projetos Flutter/project_evydhence/android/app/.cxx/Debug/2w6r1t2u/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Arquivos pessoais/Projetos Flutter/project_evydhence/android/app/.cxx/Debug/2w6r1t2u/armeabi-v7a/CMakeFiles/rebuild_cache.dir

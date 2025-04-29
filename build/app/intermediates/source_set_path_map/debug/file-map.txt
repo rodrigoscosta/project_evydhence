@@ -1,0 +1,45 @@
+com.example.project_evydhence.app-debug-0 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\android\app\src\debug\res
+com.example.project_evydhence.app-main-1 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\android\app\src\main\res
+com.example.project_evydhence.app-pngs-2 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\build\app\generated\res\pngs\debug
+com.example.project_evydhence.app-resValues-3 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\build\app\generated\res\resValues\debug
+com.example.project_evydhence.app-rs-4 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\build\app\generated\res\rs\debug
+com.example.project_evydhence.app-mergeDebugResources-5 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\build\app\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.example.project_evydhence.app-mergeDebugResources-6 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\build\app\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.example.project_evydhence.app-merged_res-7 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\build\app\intermediates\merged_res\debug
+com.example.project_evydhence.app-packaged_res-8 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\build\flutter_localization\intermediates\packaged_res\debug
+com.example.project_evydhence.app-packaged_res-9 C:\Arquivos pessoais\Projetos Flutter\project_evydhence\build\shared_preferences_android\intermediates\packaged_res\debug
+com.example.project_evydhence.app-jetified-tracing-1.2.0-10 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\01845968c20956040e692302e3df8b3e\transformed\jetified-tracing-1.2.0\res
+com.example.project_evydhence.app-jetified-lifecycle-livedata-core-ktx-2.7.0-11 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\0837d612bad07929682c2dac371a6db3\transformed\jetified-lifecycle-livedata-core-ktx-2.7.0\res
+com.example.project_evydhence.app-slidingpanelayout-1.2.0-12 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\0a767de8af973f09ecd72c4d3ff5bb5a\transformed\slidingpanelayout-1.2.0\res
+com.example.project_evydhence.app-jetified-lifecycle-process-2.7.0-13 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\0ae6e518f3489456649e3d7a01ecd5bc\transformed\jetified-lifecycle-process-2.7.0\res
+com.example.project_evydhence.app-lifecycle-runtime-2.7.0-14 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\0da4a5ca5dd16fe81ec730b9d9ed8e3c\transformed\lifecycle-runtime-2.7.0\res
+com.example.project_evydhence.app-coordinatorlayout-1.0.0-15 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\0efc3c93042a15c77f28caa4eed191a6\transformed\coordinatorlayout-1.0.0\res
+com.example.project_evydhence.app-jetified-datastore-preferences-release-16 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\1196099913325e117a4634e14b25215b\transformed\jetified-datastore-preferences-release\res
+com.example.project_evydhence.app-jetified-core-ktx-1.13.1-17 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\1977c715f98e1f51fb5a341a999d2521\transformed\jetified-core-ktx-1.13.1\res
+com.example.project_evydhence.app-lifecycle-viewmodel-2.7.0-18 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\1abae23d5a943b766106bbf5e38c9ae1\transformed\lifecycle-viewmodel-2.7.0\res
+com.example.project_evydhence.app-transition-1.4.1-19 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\1db358a68c9798f0c9190ae3897fb64c\transformed\transition-1.4.1\res
+com.example.project_evydhence.app-core-1.13.1-20 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\2db5b45568ebc02c9b65a78e4f00af7f\transformed\core-1.13.1\res
+com.example.project_evydhence.app-jetified-core-1.0.0-21 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\365a5e4eb4c4f232598d422709419160\transformed\jetified-core-1.0.0\res
+com.example.project_evydhence.app-jetified-lifecycle-viewmodel-ktx-2.7.0-22 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\36f4f6218aac00f6f9ec936f8adb85e2\transformed\jetified-lifecycle-viewmodel-ktx-2.7.0\res
+com.example.project_evydhence.app-jetified-profileinstaller-1.3.1-23 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\3ff0ff2166b68e7eec5c4beffe3b9ccf\transformed\jetified-profileinstaller-1.3.1\res
+com.example.project_evydhence.app-jetified-fragment-ktx-1.7.1-24 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\412084608bf9049fb148a05d7a741f1a\transformed\jetified-fragment-ktx-1.7.1\res
+com.example.project_evydhence.app-jetified-lifecycle-runtime-ktx-2.7.0-25 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\4d4ea7b35be6a284dc2c159755b53f9c\transformed\jetified-lifecycle-runtime-ktx-2.7.0\res
+com.example.project_evydhence.app-jetified-savedstate-ktx-1.2.1-26 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\58a52edd6f5aa6ad09e31c650fdb36b5\transformed\jetified-savedstate-ktx-1.2.1\res
+com.example.project_evydhence.app-lifecycle-livedata-core-2.7.0-27 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\5f26040fb91a3b1db4b87d611deefa8b\transformed\lifecycle-livedata-core-2.7.0\res
+com.example.project_evydhence.app-jetified-window-java-1.2.0-28 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\627f529135db74539356aa79af9e78c9\transformed\jetified-window-java-1.2.0\res
+com.example.project_evydhence.app-jetified-activity-ktx-1.8.1-29 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\6b191e9743edb87f6522a4a3ee6c7262\transformed\jetified-activity-ktx-1.8.1\res
+com.example.project_evydhence.app-jetified-startup-runtime-1.1.1-30 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\796e004b4868040386ac3645cab64844\transformed\jetified-startup-runtime-1.1.1\res
+com.example.project_evydhence.app-jetified-appcompat-resources-1.1.0-31 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\7ad76eb0e52030fa0e028dd2925ff0d6\transformed\jetified-appcompat-resources-1.1.0\res
+com.example.project_evydhence.app-appcompat-1.1.0-32 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\7e9626987091345a29126934af9dd56c\transformed\appcompat-1.1.0\res
+com.example.project_evydhence.app-fragment-1.7.1-33 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\855bdc49ccccd2bbab2086f0c8c863a1\transformed\fragment-1.7.1\res
+com.example.project_evydhence.app-jetified-lifecycle-viewmodel-savedstate-2.7.0-34 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\9a1a4d28bdc7fff55819c18e851d96a2\transformed\jetified-lifecycle-viewmodel-savedstate-2.7.0\res
+com.example.project_evydhence.app-core-runtime-2.2.0-35 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\b917ee43dc7df05000943fe1b683af22\transformed\core-runtime-2.2.0\res
+com.example.project_evydhence.app-jetified-datastore-core-release-36 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\d0f4152fd78a007e9624e203f49f4dd9\transformed\jetified-datastore-core-release\res
+com.example.project_evydhence.app-preference-1.2.1-37 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\d94756368e2d7fcf248a8282e8e23603\transformed\preference-1.2.1\res
+com.example.project_evydhence.app-jetified-annotation-experimental-1.4.0-38 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\dfb9601a910224a4ae9b8a5ede07340b\transformed\jetified-annotation-experimental-1.4.0\res
+com.example.project_evydhence.app-jetified-window-1.2.0-39 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\dfc38848c9cb48a96ca4a99cdc284828\transformed\jetified-window-1.2.0\res
+com.example.project_evydhence.app-recyclerview-1.0.0-40 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\e0c42e960ad647fa9ecd73566eac1edd\transformed\recyclerview-1.0.0\res
+com.example.project_evydhence.app-jetified-savedstate-1.2.1-41 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\e49af822aab5097be085f69c1233477d\transformed\jetified-savedstate-1.2.1\res
+com.example.project_evydhence.app-jetified-datastore-release-42 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\e8df8355199b28a624a8495518d5da46\transformed\jetified-datastore-release\res
+com.example.project_evydhence.app-jetified-activity-1.8.1-43 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\f542148ffbffe206c26e8c43aeee3442\transformed\jetified-activity-1.8.1\res
+com.example.project_evydhence.app-lifecycle-livedata-2.7.0-44 C:\Users\rodrigo.scosta\.gradle\caches\transforms-3\f7f9205ded0b8c0a6780b014838a6519\transformed\lifecycle-livedata-2.7.0\res
