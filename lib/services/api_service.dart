@@ -415,32 +415,6 @@ class ApiService {
     return totalVistoriasList;
   }
 
-  // Future<List<TotalVistoriasRealizadasPorMesModel>>
-  //     totalVistoriasFeitasPorMes() async {
-  //   List<TotalVistoriasRealizadasPorMesModel> totalVistoriasList = [];
-
-  //   try {
-  //     var url = Uri.parse(ApiConstants.baseUrl +
-  //         ApiConstants.getTotalSchedulesByMonthsEndpoint);
-  //     var response = await http.get(url);
-
-  //     if (response.statusCode == HttpStatus.ok) {
-  //       final List<dynamic> decodedData = jsonDecode(response.body);
-
-  //       totalVistoriasList = decodedData.map((item) {
-  //         return TotalVistoriasRealizadasPorMesModel(
-  //           qtdVistorias: item['qtdVistorias'] ?? 0,
-  //           mes: item['mes'] ?? '',
-  //         );
-  //       }).toList();
-  //     }
-  //   } catch (_) {
-  //     totalVistoriasList = [];
-  //   }
-
-  //   return totalVistoriasList;
-  // }
-
   Future<TotalVehiclesModel> totalVeiculos() async {
     TotalVehiclesModel totalVeiculosModel = TotalVehiclesModel(qtdVeiculos: 0);
     try {
@@ -459,5 +433,33 @@ class ApiService {
     }
 
     return totalVeiculosModel;
+  }
+
+  Future<List<VistoriaAgendadaModel>> proximasVistorias() async {
+    List<VistoriaAgendadaModel> proximasVistoriasList = [];
+
+    try {
+      var url = Uri.parse(
+          ApiConstants.baseUrl + ApiConstants.getNextSchedulesEndpoint);
+      var response = await http.get(url);
+
+      if (response.statusCode == HttpStatus.ok) {
+        final List<dynamic> decodedData =
+            jsonDecode(utf8.decode(response.bodyBytes));
+
+        proximasVistoriasList = decodedData.map((item) {
+          return VistoriaAgendadaModel(
+            cliente: item['cliente'] ?? '',
+            data: item['data'] ?? '',
+            horario: item['hora'] ?? '',
+            local: item['local'] ?? '',
+          );
+        }).toList();
+      }
+    } catch (_) {
+      proximasVistoriasList = [];
+    }
+
+    return proximasVistoriasList;
   }
 }

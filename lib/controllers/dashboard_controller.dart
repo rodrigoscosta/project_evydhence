@@ -27,10 +27,6 @@ abstract class _DashboardControllerBase with Store {
   void setTotalClientesPorGenero(List<TotalClientesPorGeneroModel> value) =>
       totalClientesPorGenero = ObservableList.of(value);
 
-  // @observable
-  // List<TotalVistoriasRealizadasPorMesModel> totalVistoriasFeitasPorMes =
-  //     ObservableList();
-
   @observable
   ObservableList<TotalVistoriasRealizadasPorMesModel>
       totalVistoriasFeitasPorMes =
@@ -47,6 +43,14 @@ abstract class _DashboardControllerBase with Store {
   @action
   void setTotalVeiculos(List<TotalVehiclesModel> value) =>
       totalVeiculos = ObservableList.of(value);
+
+  @observable
+  ObservableList<VistoriaAgendadaModel> proximasVistorias =
+      ObservableList<VistoriaAgendadaModel>();
+
+  @action
+  void setProximasVistorias(List<VistoriaAgendadaModel> value) =>
+      proximasVistorias = ObservableList.of(value);
 
   @observable
   String anoSelecionado = DateTime.now().year.toString();
@@ -67,6 +71,9 @@ abstract class _DashboardControllerBase with Store {
 
   @observable
   bool loadingTotalVeiculos = false;
+
+  @observable
+  bool loadingProximasVistorias = false;
 
   @observable
   String? loadDashboardError;
@@ -117,22 +124,6 @@ abstract class _DashboardControllerBase with Store {
     }
   }
 
-  // @action
-  // Future<void> loadTotalVistoriasFeitasPorMes() async {
-  //   loadingTotalClientesPorGenero = true;
-  //   try {
-  //     final List<TotalVistoriasRealizadasPorMesModel> results =
-  //         await _dashBoardService.totalVistoriasFeitasPorMes();
-
-  //     setTotalVistoriasFeitasPorMes(results);
-  //   } on DioException catch (_) {
-  //     setTotalVistoriasFeitasPorMes([]);
-  //     loadDashboardError = 'Ocorreu um erro ao buscar as vistorias.';
-  //   } finally {
-  //     loadingTotalClientesPorGenero = false;
-  //   }
-  // }
-
   @action
   Future<void> loadTotalVeiculos() async {
     loadingTotalVeiculos = true;
@@ -144,6 +135,22 @@ abstract class _DashboardControllerBase with Store {
       loadDashboardError = 'Ocorreu um erro ao buscar o total de clientes.';
     } finally {
       loadingTotalVeiculos = false;
+    }
+  }
+
+  @action
+  Future<void> loadProximasVistorias() async {
+    loadingProximasVistorias = true;
+    try {
+      final List<VistoriaAgendadaModel> results =
+          await _dashBoardService.proximasVistorias();
+
+      setProximasVistorias(results);
+    } catch (_) {
+      setProximasVistorias([]);
+      loadDashboardError = 'Erro ao buscar vistorias.';
+    } finally {
+      loadingProximasVistorias = false;
     }
   }
 }

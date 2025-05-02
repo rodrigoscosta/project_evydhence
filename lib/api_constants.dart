@@ -30,4 +30,6 @@ class ApiConstants {
   static String getTotalSchedulesByMonthsEndpoint = '/schedules/total/months/';
 
   static String getTotalVehiclesEndpoint = '/vehicles/total/';
+
+  static String getNextSchedulesEndpoint = '/schedules/next/';
 }

@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
+import 'package:project_evydhence/components/date_parser.dart';
 import 'package:project_evydhence/controllers/dashboard_controller.dart';
 import 'package:project_evydhence/models/schedule_model.dart';
 import 'package:project_evydhence/models/total_clientes_model.dart';
@@ -49,6 +50,7 @@ class _DashboardPageState extends State<DashboardPage> {
       _dashboard.loadTotalClientesPorGenero(),
       _dashboard.loadTotalVeiculos(),
       _dashboard.loadTotalVistoriasFeitasPorMes(anoAtual),
+      _dashboard.loadProximasVistorias(),
     ]);
     if (mounted) setState(() {});
   }
@@ -60,7 +62,6 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final scale = zoomProvider.scaleFactor;
-
     return Scaffold(
       backgroundColor: widget.isDarkMode ? Colors.black : Colors.white,
       appBar: _buildAppBar(scale),
@@ -218,6 +219,53 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                   );
                 },
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: DashboardCard(
+                      title: 'Proximas vistorias agendadas',
+                      isDarkMode: widget.isDarkMode,
+                      scale: scale,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _dashboard.proximasVistorias.length,
+                        itemBuilder: (context, index) {
+                          final vistoria = _dashboard.proximasVistorias[index];
+                          return ListTile(
+                            title: Text(
+                              vistoria.cliente,
+                              style: TextStyle(
+                                fontSize: 16 * scale,
+                                fontWeight: FontWeight.w500,
+                                color: widget.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'Data: ${fromDateTimeToDateUsingPattern(DateTime.parse(vistoria.data))}, às ${vistoria.horario} - Local: ${vistoria.local}',
+                              style: TextStyle(
+                                fontSize: 16 * scale,
+                                fontWeight: FontWeight.w500,
+                                color: widget.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                            leading: Icon(
+                              Icons.assignment,
+                              size: 28.0 * zoomProvider.scaleFactor,
+                              color: widget.isDarkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
